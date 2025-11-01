@@ -1,16 +1,17 @@
-Generate a detailed crime investigation case in JSON format. Create an engaging mystery with realistic clues, suspects, and interrogation dynamics. Follow this exact structure:
+`Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Create an engaging mystery with realistic clues and strategic interrogation paths.
 
+STRUCTURE:
 {
   "title": "Case Name",
   "type": "Murder/Theft/Kidnapping/etc",
   "victim": "Victim Name",
   "timeLimit": 3600,
-  "briefing": "Initial case description with key facts",
+  "briefing": "Detailed initial case description with key facts and circumstances",
   "scene": [
     {
       "id": "location1",
-      "name": "Location Name", 
-      "description": "Detailed description of the location",
+      "name": "Location Name",
+      "description": "Vivid description of the crime scene area",
       "evidenceIds": ["ev1", "ev2"],
       "examined": false
     }
@@ -19,130 +20,55 @@ Generate a detailed crime investigation case in JSON format. Create an engaging 
     {
       "id": "ev1",
       "name": "Evidence Name",
-      "description": "What it looks like initially",
+      "description": "Initial appearance/description",
       "location": "location1",
       "collected": false,
       "analyzed": false,
-      "analysisResult": "What forensics reveals",
+      "analysisResult": "Detailed forensic analysis revealing crucial information",
       "hidden": false,
       "unlockedBy": "ev2"
     }
   ],
-  "people": [ 
+  "people": [
     {
-      "id": "suspect1",
+      "id": "person1",
       "name": "Full Name",
       "age": 30,
       "occupation": "Job Title",
-      "relationship": "How they knew the victim",
-      "type":"suspect or witness"
+      "relationship": "Connection to victim",
+      "type": "suspect",
       "available": true,
-      "initialStatement": "Their initial statement",
+      "availability": "ev3",
+      "initialStatement": "Their first statement when questioned",
       "interviewed": false,
       "dialogueTrees": [
         {
-          "id":"tree1",
-          "question":"Question to ask",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "Their answer - can reveal lies, motives, or alibis", 
-							"revealsDetail": "Important key details", 
-							followUps: ['tree2'],
-						},
-					],
-        },
-        {
-          "id":"tree2",
-          "question":"Confront with evidence",
+          "id": "tree1",
+          "question": "Question to ask",
+          "asked": false,
           "requiresEvidence": "ev1",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "How they react when confronted with specific evidence", 
-							followUps: ['tree5'],
-						},
-					],
-        },
-        {
-          "id": 'tree3',
-					"question": 'Question based on obtained information from another person',
-					"requiresPerson": 'p1',
-					"requiresResponse": 'tree5-r1',
-					"asked": false,
-					"responses": [
-						{
-							"id": 'r1',
-							"text": "Their answer - can reveal lies, motives, or alibis",
-							"followUps": ['tree5', 'tree6'],
-						},
-					],
-				},
-        {
-          "id":"tree4",
-          "question":"Question to ask to check for contradictions with specific evidence",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "Answer that contradicts with specific evidence", 
-              "revealsContradiction": 'contradiction1',
-						},
-					],
-        }
-      ], 
-      "contradictions": [
-				{
-					"id": 'contradiction1',
-					"response1": 'tree1-r1',
-					"response2": 'tree2-r1',
-					"description":
-							'Elena claimed she left at 11 PM but security footage shows 1 AM. She admitted to lying about the time.',
-							'Description that explains the contradiction',
-						"caught": false
-					}
-			]
-    },
-    {
-      "id": "witness1",
-      "name": "Witness Name",
-      "age": 25,
-      "occupation": "Job Title",
-      "relationship": "How they knew the victim",
-      "type":"witness",
-      "available": true,
-      "initialStatement": "Their initial statement",
-      "interviewed": false,
-      "dialogueTrees": [
-        {
-          "id":"tree1",
-          "question":"Question to ask",
-          "asked":false,
-          "responses": [ 
+          "requiresPerson": "person2",
+          "requiresResponse": "tree3-r1",
+          "responses": [
             {
-              "id": 'r1', 
-              "text": "Their answer - can reveal lies, motives, or alibis", 
+              "id": "r1",
+              "text": "Their response text",
+              "followUps": ["tree2", "tree3"],
+              "revealsDetail": "Key information revealed",
+              "revealsContradiction": "contradiction-id"
             }
-          ],
+          ]
         }
       ],
-      "contradictions": []
-    },
-    {
-      "id": "witness2",
-      "name": "Anonymous Caller",
-      "age": 0,
-      "occupation": "Unknown",
-      "relationship": "Anonymous tip",
-      "type":"witness",
-      "available": false,
-      "initialStatement": "Their anonymous statement",
-      "availability": "ev1",
-      "interviewed": false,
-      "contradictions": [],
-			"dialogueTrees": []
+      "contradictions": [
+        {
+          "id": "contradiction1",
+          "response1": "tree1-r1",
+          "response2": "tree3-r1",
+          "description": "Explanation of the contradiction between statements",
+          "caught": false
+        }
+      ]
     }
   ],
   "phoneRecords": {
@@ -150,17 +76,17 @@ Generate a detailed crime investigation case in JSON format. Create an engaging 
     "calls": [
       {
         "time": "20:15",
-        "from": "Suspect Name",
-        "to": "Victim Name",
+        "from": "Person Name",
+        "to": "Person Name",
         "duration": "3 min"
       }
     ],
     "texts": [
       {
         "time": "22:45",
-        "from": "Suspect Name",
-        "to": "Victim Name",
-        "message": "Actual message content",
+        "from": "Person Name",
+        "to": "Person Name",
+        "message": "Actual message content with potential evidence",
         "read": true
       }
     ]
@@ -169,26 +95,67 @@ Generate a detailed crime investigation case in JSON format. Create an engaging 
     {
       "id": "news1",
       "triggerCondition": "evidence-analyzed-3",
-      "headline": "News headline",
-      "content": "Full news article content",
+      "headline": "News Headline",
+      "content": "Full news article revealing new information",
       "revealed": false
     }
   ],
   "solution": {
-    "culprit": "suspect-id",
-    "motive": "Why they did it",
-    "method": "How they committed the crime"
+    "culprit": "person1",
+    "motive": "Detailed explanation of why they did it",
+    "method": "Detailed explanation of how they committed the crime"
   }
 }
 
-IMPORTANT GUIDELINES:
-- Create 3-4 suspects with complex relationships
-- Include 6-10 pieces of evidence across 3-4 locations
-- Use "hidden": true and "unlockedBy": "evidence-id" for sequential discovery
-- Each suspect should have 5-7 questions including evidence/suspect confrontations
-- Phone records should include both calls and revealing text messages
-- Some witnesses locked behind evidence using "availability": "evidence-id"
-- Breaking news triggers: "evidence-analyzed-X" or "suspect-interrogated-X"
-- Evidence analysis should reveal crucial information
-- Make some evidence point to wrong suspects (red herrings)
-- timeLimit is optional (in seconds), omit for unlimited time
+CRITICAL REQUIREMENTS:
+
+DIALOGUE TREES:
+- Each person should have 5-8 dialogue trees
+- Create branching paths: early questions unlock later ones via "followUps"
+- Use "requiresEvidence" for questions that need analyzed evidence
+- Use "requiresPerson" + "requiresResponse" for cross-interrogation (confronting with other people's statements)
+- Some trees should be available immediately, others locked behind requirements
+- Include "revealsDetail" for important clues discovered through questioning
+- Design trees so asking questions in different orders reveals different information
+
+CONTRADICTIONS:
+- Each suspect should have 2-3 potential contradictions
+- Format: "tree1-r1" means response r1 from tree1
+- Contradictions should be subtle - require player to notice inconsistencies
+- Only suspects need contradictions, witnesses don't
+
+PEOPLE TYPES:
+- type: "suspect" = potential culprits (3-4 people)
+- type: "witness" = witnesses who provide information (2-3 people)
+- Suspects: more complex dialogue trees, contradictions, motives
+- Witnesses: simpler trees, provide observations and tips
+- Use "available: false" + "availability: evidence-id" to lock witnesses behind evidence collection
+
+EVIDENCE:
+- 8-12 pieces of evidence across 3-4 locations
+- Use "hidden: true" + "unlockedBy: evidence-id" for sequential discovery (finding X reveals Y)
+- analysisResult should contain specific, useful information
+- Some evidence should point to wrong suspects (red herrings)
+- Link evidence to dialogue trees (people react to being confronted with evidence)
+
+PHONE RECORDS:
+- 4-6 calls showing timeline and relationships
+- 4-6 texts with actual message content
+- Include incriminating messages, timeline clues, suspicious communications
+- Must be unlocked by collecting/analyzing phone evidence
+
+BREAKING NEWS:
+- 2-3 news items that unlock during investigation
+- Triggers: "evidence-analyzed-X" or "person-interviewed-X" (replace X with number)
+- Should reveal context, backstory, or new angles on the case
+
+GENERAL TIPS:
+- Make the mystery solvable but not obvious
+- Include red herrings and false leads
+- Ensure contradictions are catchable through careful questioning
+- Create realistic motives for all suspects
+- Timeline should be consistent and verifiable
+- The culprit should have means, motive, and opportunity
+- Design so player must collect evidence AND interrogate strategically to solve
+
+timeLimit is optional (in seconds). Omit for unlimited time.`

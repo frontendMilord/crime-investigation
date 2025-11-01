@@ -2,19 +2,20 @@ import type { ICase } from '../types'
 
 // export const defaultCases: ICase[] = []
 
-export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format. Create an engaging mystery with realistic clues, suspects, and interrogation dynamics. Follow this exact structure:
+export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Create an engaging mystery with realistic clues and strategic interrogation paths.
 
+STRUCTURE:
 {
   "title": "Case Name",
   "type": "Murder/Theft/Kidnapping/etc",
   "victim": "Victim Name",
-  "timeLimit": 3600,
-  "briefing": "Initial case description with key facts",
+  "timeLimit": 1500,
+  "briefing": "Detailed initial case description with key facts and circumstances",
   "scene": [
     {
       "id": "location1",
-      "name": "Location Name", 
-      "description": "Detailed description of the location",
+      "name": "Location Name",
+      "description": "Vivid description of the crime scene area",
       "evidenceIds": ["ev1", "ev2"],
       "examined": false
     }
@@ -23,11 +24,11 @@ export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investiga
     {
       "id": "ev1",
       "name": "Evidence Name",
-      "description": "What it looks like initially",
+      "description": "Initial appearance/description",
       "location": "location1",
       "collected": false,
       "analyzed": false,
-      "analysisResult": "What forensics reveals",
+      "analysisResult": "Detailed forensic analysis revealing crucial information",
       "hidden": false,
       "unlockedBy": "ev2"
     }
@@ -154,17 +155,17 @@ export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investiga
     "calls": [
       {
         "time": "20:15",
-        "from": "Suspect Name",
-        "to": "Victim Name",
+        "from": "Person Name",
+        "to": "Person Name",
         "duration": "3 min"
       }
     ],
     "texts": [
       {
         "time": "22:45",
-        "from": "Suspect Name",
-        "to": "Victim Name",
-        "message": "Actual message content",
+        "from": "Person Name",
+        "to": "Person Name",
+        "message": "Actual message content with potential evidence",
         "read": true
       }
     ]
@@ -173,29 +174,68 @@ export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investiga
     {
       "id": "news1",
       "triggerCondition": "evidence-analyzed-3",
-      "headline": "News headline",
-      "content": "Full news article content",
+      "headline": "News Headline",
+      "content": "Full news article revealing new information",
       "revealed": false
     }
   ],
   "solution": {
-    "culprit": "suspect-id",
-    "motive": "Why they did it",
-    "method": "How they committed the crime"
+    "culprit": "person1",
+    "motive": "Detailed explanation of why they did it",
+    "method": "Detailed explanation of how they committed the crime"
   }
 }
 
-IMPORTANT GUIDELINES:
-- Create 3-5 suspects with complex relationships
-- Include 6-10 pieces of evidence across 2-5 locations
-- Use "hidden": true and "unlockedBy": "evidence-id" for sequential discovery
-- Each suspect should have 5-10 questions including evidence/suspect confrontations
-- Phone records should include both calls and revealing text messages
-- Some witnesses locked behind evidence using "availability": "evidence-id"
-- Breaking news triggers: "evidence-analyzed-X" or "suspect-interrogated-X"
-- Evidence analysis should reveal crucial information and if evidence mentions someone use their name instead of id
-- Evidence that can be unlocked by another piece of evidence should be linked to that evidence
-- Make some evidence point to wrong suspects (red herrings)
+CRITICAL REQUIREMENTS:
+
+DIALOGUE TREES:
+- Each person should have 5-8 dialogue trees
+- Create branching paths: early questions unlock later ones via "followUps"
+- Use "requiresEvidence" for questions that need analyzed evidence
+- Use "requiresPerson" + "requiresResponse" for cross-interrogation (confronting with other people's statements)
+- Some trees should be available immediately, others locked behind requirements
+- Include "revealsDetail" for important clues discovered through questioning
+- Design trees so asking questions in different orders reveals different information
+
+CONTRADICTIONS:
+- Each suspect should have 2-3 potential contradictions
+- Format: "tree1-r1" means response r1 from tree1
+- Contradictions should be subtle - require player to notice inconsistencies
+- Only suspects need contradictions, witnesses don't
+
+PEOPLE TYPES:
+- type: "suspect" = potential culprits (3-4 people)
+- type: "witness" = witnesses who provide information (2-3 people)
+- Suspects: more complex dialogue trees, contradictions, motives
+- Witnesses: simpler trees, provide observations and tips
+- Use "available: false" + "availability: evidence-id" to lock witnesses behind evidence collection
+
+EVIDENCE:
+- 8-12 pieces of evidence across 3-4 locations
+- Use "hidden: true" + "unlockedBy: evidence-id" for sequential discovery (finding X reveals Y)
+- analysisResult should contain specific, useful information
+- Some evidence should point to wrong suspects (red herrings)
+- Link evidence to dialogue trees (people react to being confronted with evidence)
+
+PHONE RECORDS:
+- 4-6 calls showing timeline and relationships
+- 4-6 texts with actual message content
+- Include incriminating messages, timeline clues, suspicious communications
+- Must be unlocked by collecting/analyzing phone evidence
+
+BREAKING NEWS:
+- 2-3 news items that unlock during investigation
+- Triggers: "evidence-analyzed-X" or "person-interviewed-X" (replace X with number)
+- Should reveal context, backstory, or new angles on the case
+
+GENERAL TIPS:
+- Make the mystery solvable but not obvious
+- Include red herrings and false leads
+- Ensure contradictions are catchable through careful questioning
+- Create realistic motives for all suspects
+- Timeline should be consistent and verifiable
+- The culprit should have means, motive, and opportunity
+- Design so player must collect evidence AND interrogate strategically to solve
 - timeLimit is optional (in seconds:900-3600), omit for unlimited time
 `
 
