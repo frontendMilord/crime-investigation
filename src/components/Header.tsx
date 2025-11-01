@@ -8,6 +8,8 @@ interface IHeaderProps {
 	revealedNews: IBreakingNews[]
 	setView: (view: ViewType) => void
 	currentCase: ICase
+	isNewsReaded: boolean
+	setIsNewsReaded: (isNewsReaded: boolean) => void
 }
 
 const Header = ({
@@ -16,7 +18,14 @@ const Header = ({
 	timerActive,
 	setView,
 	currentCase,
+	isNewsReaded,
+	setIsNewsReaded,
 }: IHeaderProps) => {
+	const onBreakingNewsClick = () => {
+		setIsNewsReaded(true)
+		setView('news')
+	}
+
 	return (
 		<div className='bg-gray-800 border-b border-gray-700 p-4'>
 			<div className='max-w-7xl mx-auto flex justify-between items-center'>
@@ -27,8 +36,11 @@ const Header = ({
 					<p className='text-sm text-gray-400'>Victim: {currentCase.victim}</p>
 				</div>
 				<div className='flex items-center gap-4'>
-					{revealedNews.length > 0 && (
-						<div className='flex items-center gap-2 text-yellow-500 animate-pulse'>
+					{!isNewsReaded && revealedNews.length > 0 && (
+						<div
+							className='flex items-center gap-2 text-yellow-500 animate-pulse cursor-pointer'
+							onClick={onBreakingNewsClick}
+						>
 							<Newspaper className='w-5 h-5' />
 							<span className='text-sm font-semibold'>
 								{revealedNews.length} Breaking News

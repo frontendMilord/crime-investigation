@@ -7,7 +7,7 @@ import {
 	Search,
 	Users,
 } from 'lucide-react'
-import type { NavigationLinks, ViewType } from '../types'
+import type { INavigationLinks, ViewType } from '../types'
 
 interface NavigationProps {
 	collectedEvidenceCount: number
@@ -16,6 +16,8 @@ interface NavigationProps {
 	revealedNewsCount: number
 	onTabClick: (tab: ViewType) => void
 	view: ViewType
+	isNewsReaded: boolean
+	setIsNewsReaded: (isNewsReaded: boolean) => void
 }
 
 const Navigation = ({
@@ -25,8 +27,9 @@ const Navigation = ({
 	revealedNewsCount,
 	onTabClick,
 	view,
+	isNewsReaded,
 }: NavigationProps) => {
-	const NAVIGATION_TABS: NavigationLinks[] = [
+	const NAVIGATION_TABS: INavigationLinks[] = [
 		{ id: 'scene', icon: Map, label: 'Crime Scene' },
 		{
 			id: 'evidence',
@@ -62,7 +65,7 @@ const Navigation = ({
 						key={tab.id}
 						onClick={() => onTabClick(tab.id)}
 						disabled={tab.disabled}
-						className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-all whitespace-nowrap relative ${
+						className={`flex items-center gap-2 px-6 py-4 border-b-2 cursor-pointer transition-all whitespace-nowrap relative ${
 							view === tab.id
 								? 'border-red-500 text-white'
 								: tab.disabled
@@ -72,7 +75,7 @@ const Navigation = ({
 					>
 						<tab.icon className='w-4 h-4' />
 						{tab.label}
-						{tab.badge && (
+						{tab.badge && !isNewsReaded && (
 							<span className='absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse'></span>
 						)}
 					</button>

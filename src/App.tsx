@@ -26,6 +26,7 @@ function App() {
 	const [interrogationMode, setInterrogationMode] = useState(false)
 	const [contradictionMode, setContradictionMode] = useState(false)
 	const [selectedResponses, setSelectedResponses] = useState<string[]>([])
+	const [isNewsReaded, setIsNewsReaded] = useState(false)
 	const [solutionSubmitted, setSolutionSubmitted] = useState(false)
 	const [solutionCorrect, setSolutionCorrect] = useState(false)
 
@@ -48,7 +49,12 @@ function App() {
 		}
 	}, [timerActive, timeRemaining])
 
-	const onTabClick = (tab: ViewType) => setView(tab)
+	const onTabClick = (tab: ViewType) => {
+		setView(tab)
+		if (tab === 'news') {
+			setIsNewsReaded(true)
+		}
+	}
 
 	const onWrongAnswer = () => {
 		setSolutionSubmitted(false)
@@ -83,6 +89,7 @@ function App() {
 			if (news.triggerCondition.startsWith('evidence-analyzed-')) {
 				const required = parseInt(news.triggerCondition.split('-')[2])
 				if (analyzedCount >= required) {
+					setIsNewsReaded(false)
 					return { ...news, revealed: true }
 				}
 			}
@@ -90,6 +97,7 @@ function App() {
 			if (news.triggerCondition.startsWith('person-interviewed-')) {
 				const required = parseInt(news.triggerCondition.split('-')[2])
 				if (interviewedCount >= required) {
+					setIsNewsReaded(false)
 					return { ...news, revealed: true }
 				}
 			}
@@ -245,7 +253,9 @@ function App() {
 			const updatedCase = { ...currentCase, people: updatedPeople }
 			setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 
-			toast.success(`Contradiction found! ${contradiction.description}`)
+			toast.success(`Contradiction found! ${contradiction.description}`, {
+				autoClose: 10000,
+			})
 		} else {
 			toast('No contradiction found between these statements.')
 		}
@@ -316,6 +326,8 @@ function App() {
 				timeRemaining={timeRemaining}
 				timerActive={timerActive}
 				revealedNews={revealedNews}
+				isNewsReaded={isNewsReaded}
+				setIsNewsReaded={setIsNewsReaded}
 			/>
 
 			<Navigation
@@ -325,6 +337,8 @@ function App() {
 				phoneUnlocked={phoneUnlocked}
 				revealedNewsCount={revealedNews.length}
 				view={view}
+				isNewsReaded={isNewsReaded}
+				setIsNewsReaded={setIsNewsReaded}
 			/>
 
 			{/* Content */}
