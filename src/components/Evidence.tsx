@@ -1,17 +1,19 @@
-import { Beaker } from 'lucide-react'
-import type { ICase, IEvidence } from '../types'
+import { Beaker, Loader } from 'lucide-react'
+import type { IEvidence, IEvidenceAnalyzedIn } from '../types'
+import { useState } from 'react'
+import { useCaseStore } from '../store/case'
 
 interface IEvidenceProps {
 	collectedEvidence: IEvidence[]
 	analyzeEvidence: (evidenceId: string) => void
-	currentCase: ICase
 }
 
-const Evidence = ({
-	analyzeEvidence,
-	collectedEvidence,
-	currentCase,
-}: IEvidenceProps) => {
+const Evidence = ({ analyzeEvidence, collectedEvidence }: IEvidenceProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+	const [evidenceResultsAnalyzedIn, setEvidenceResultsAnalyzedIn] = useState<
+		IEvidenceAnalyzedIn[]
+	>([])
+
 	return (
 		<div>
 			<h2 className='text-2xl font-bold mb-6'>Evidence Locker</h2>
@@ -47,7 +49,7 @@ const Evidence = ({
 							{!evidence.analyzed ? (
 								<button
 									onClick={() => analyzeEvidence(evidence.id)}
-									className='bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm transition-all flex items-center gap-2'
+									className='bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm transition-all flex items-center gap-2 cursor-pointer'
 								>
 									<Beaker className='w-4 h-4' />
 									Analyze in Lab
@@ -62,6 +64,14 @@ const Evidence = ({
 									</p>
 								</div>
 							)}
+
+							{!!evidenceResultsAnalyzedIn.length &&
+								evidenceResultsAnalyzedIn.find((e) => e.id === evidence.id) && (
+									<div className='bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm transition-all flex items-center gap-2'>
+										<Loader className='w-4 h-4 animate-spin' />
+										Analyzing in Lab
+									</div>
+								)}
 						</div>
 					))}
 				</div>

@@ -1,11 +1,14 @@
 import { MessageSquare, Phone as PhoneIcon } from 'lucide-react'
-import type { ICase } from '../types'
+import { useCaseStore } from '../store/case'
 
 interface IPhoneProps {
 	phoneUnlocked: boolean
-	currentCase: ICase
 }
-const Phone = ({ currentCase, phoneUnlocked }: IPhoneProps) => {
+const Phone = ({ phoneUnlocked }: IPhoneProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+
+	if (!currentCase) return null
+
 	return (
 		<div>
 			<h2 className='text-2xl font-bold mb-6'>Phone Records</h2>

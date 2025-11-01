@@ -1,7 +1,7 @@
-import type { ICase, IEvidence, IPerson } from '../types'
+import { useCaseStore } from '../store/case'
+import type { IEvidence, IPerson } from '../types'
 
 interface IBoardProps {
-	currentCase: ICase
 	collectedEvidence: IEvidence[]
 	analyzedEvidence: IEvidence[]
 	availablePeople: IPerson[]
@@ -10,8 +10,11 @@ const Board = ({
 	analyzedEvidence,
 	availablePeople,
 	collectedEvidence,
-	currentCase,
 }: IBoardProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+
+	if (!currentCase) return null
+
 	return (
 		<div>
 			<h2 className='text-2xl font-bold mb-6'>Case Board</h2>

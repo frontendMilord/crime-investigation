@@ -1,13 +1,13 @@
 import { Clock, Home, Newspaper } from 'lucide-react'
-import type { IBreakingNews, ICase, ViewType } from '../types'
+import type { IBreakingNews } from '../types'
 import { formatTime } from '../utils'
+import { useCaseStore } from '../store/case'
+import { useNavigationStore } from '../store/navigation'
 
 interface IHeaderProps {
 	timeRemaining: number | null
 	timerActive: boolean
 	revealedNews: IBreakingNews[]
-	setView: (view: ViewType) => void
-	currentCase: ICase
 	isNewsReaded: boolean
 	setIsNewsReaded: (isNewsReaded: boolean) => void
 }
@@ -16,15 +16,18 @@ const Header = ({
 	revealedNews,
 	timeRemaining,
 	timerActive,
-	setView,
-	currentCase,
 	isNewsReaded,
 	setIsNewsReaded,
 }: IHeaderProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+	const { setView } = useNavigationStore((state) => state)
+
 	const onBreakingNewsClick = () => {
 		setIsNewsReaded(true)
 		setView('news')
 	}
+
+	if (!currentCase) return null
 
 	return (
 		<div className='bg-gray-800 border-b border-gray-700 p-4'>

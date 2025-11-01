@@ -1,6 +1,7 @@
 import { AlertTriangle, X } from 'lucide-react'
-import type { ICase, IDialogueTree, IPerson } from '../types'
+import type { IDialogueTree, IPerson } from '../types'
 import { useEffect, useState } from 'react'
+import { useCaseStore } from '../store/case'
 
 interface IInterrogationProps {
 	interrogationMode: boolean
@@ -8,7 +9,6 @@ interface IInterrogationProps {
 	witnesses: IPerson[]
 	startInterrogation: (personId: string) => void
 	selectedPerson: string | null
-	currentCase: ICase
 	toggleContradictionMode: () => void
 	contradictionMode: boolean
 	closeInterrogation: () => void
@@ -23,7 +23,6 @@ const Interrogation = ({
 	startInterrogation,
 	suspects,
 	witnesses,
-	currentCase,
 	selectedPerson,
 	toggleContradictionMode,
 	contradictionMode,
@@ -33,12 +32,13 @@ const Interrogation = ({
 	selectResponse,
 	askQuestion,
 }: IInterrogationProps) => {
+	const { currentCase } = useCaseStore((state) => state)
 	const [person, setPerson] = useState<IPerson | null>(null)
 	const [askedTrees, setAskedTrees] = useState<IDialogueTree[]>([])
 	const [availableTrees, setAvailableTrees] = useState<IDialogueTree[]>([])
 
 	useEffect(() => {
-		const person = currentCase.people.find((p) => p.id === selectedPerson)
+		const person = currentCase?.people.find((p) => p.id === selectedPerson)
 		if (person) {
 			setPerson(person)
 		}
@@ -56,14 +56,14 @@ const Interrogation = ({
 			if (tree.asked) return false
 
 			if (tree.requiresEvidence) {
-				const evidence = currentCase.evidence.find(
+				const evidence = currentCase?.evidence.find(
 					(e) => e.id === tree.requiresEvidence
 				)
 				if (!evidence?.analyzed) return false
 			}
 
 			if (tree.requiresPerson && tree.requiresResponse) {
-				const requiredPerson = currentCase.people.find(
+				const requiredPerson = currentCase?.people.find(
 					(p) => p.id === tree.requiresPerson
 				)
 				const requiredTree = requiredPerson?.dialogueTrees.find((t) =>

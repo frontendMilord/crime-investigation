@@ -1,7 +1,7 @@
-import type { ICase, IEvidence } from '../types'
+import { useCaseStore } from '../store/case'
+import type { IEvidence } from '../types'
 
 interface SceneProps {
-	currentCase: ICase
 	examineLocation: (locationId: string) => void
 	selectedLocation: string | null
 	availableEvidence: IEvidence[]
@@ -9,12 +9,15 @@ interface SceneProps {
 }
 
 const Scene = ({
-	currentCase,
 	examineLocation,
 	selectedLocation,
 	availableEvidence,
 	collectEvidence,
 }: SceneProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+
+	if (!currentCase) return null
+
 	return (
 		<div>
 			<h2 className='text-2xl font-bold mb-6'>Crime Scene Locations</h2>

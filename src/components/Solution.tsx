@@ -1,12 +1,12 @@
-import type { ICase, IPerson, ViewType } from '../types'
+import { useCaseStore } from '../store/case'
+import { useNavigationStore } from '../store/navigation'
+import type { IPerson } from '../types'
 
 interface ISolutionProps {
 	solutionSubmitted: boolean
 	solutionCorrect: boolean
 	suspects: IPerson[]
 	submitSolution: (culpritId: string) => void
-	setView: (view: ViewType) => void
-	currentCase: ICase
 	onWrongAnswer: () => void
 }
 
@@ -15,10 +15,13 @@ const Solution = ({
 	solutionSubmitted,
 	suspects,
 	submitSolution,
-	currentCase,
-	setView,
 	onWrongAnswer,
 }: ISolutionProps) => {
+	const { currentCase } = useCaseStore((state) => state)
+	const { setView } = useNavigationStore((state) => state)
+
+	if (!currentCase) return null
+
 	return (
 		<div>
 			<h2 className='text-2xl font-bold mb-6'>Submit Your Solution</h2>

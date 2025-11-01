@@ -1,18 +1,18 @@
 import { Clock, Home } from 'lucide-react'
 import { formatTime } from '../utils'
-import type { ICase, ViewType } from '../types'
+import { useNavigationStore } from '../store/navigation'
+import { useCaseStore } from '../store/case'
 
 interface IBriefingProps {
-	currentCase: ICase
-	setView: (view: ViewType) => void
 	beginInvestigation: () => void
 }
 
-const Briefing = ({
-	currentCase,
-	setView,
-	beginInvestigation,
-}: IBriefingProps) => {
+const Briefing = ({ beginInvestigation }: IBriefingProps) => {
+	const { setView } = useNavigationStore((state) => state)
+	const { currentCase } = useCaseStore((state) => state)
+
+	if (!currentCase) return null
+
 	return (
 		<div className='h-full min-h-screen bg-gray-900 text-gray-100 p-8'>
 			<div className='max-w-3xl mx-auto'>

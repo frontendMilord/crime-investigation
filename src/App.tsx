@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { ICase, ViewType } from './types'
-import { defaultCases } from './consts/case'
+import type { ViewType } from './types'
 import Navigation from './components/Navigation'
 import Header from './components/Header'
 import Scene from './components/Scene'
@@ -13,12 +12,15 @@ import Solution from './components/Solution'
 import Interrogation from './components/Interrogation'
 import Phone from './components/Phone'
 import { toast } from 'react-toastify'
+import { useCaseStore } from './store/case'
+import { useNavigationStore } from './store/navigation'
 
 function App() {
-	const [cases, setCases] = useState<ICase[]>(defaultCases)
+	const { currentCase, setCurrentCase, cases, setCases } = useCaseStore(
+		(state) => state
+	)
+	const { view, setView } = useNavigationStore((state) => state)
 	const [currentCaseId, setCurrentCaseId] = useState<string | null>(null)
-	const [currentCase, setCurrentCase] = useState<ICase | null>(null)
-	const [view, setView] = useState<ViewType>('menu')
 	const [timeRemaining, setTimeRemaining] = useState<number | null>(null)
 	const [timerActive, setTimerActive] = useState(false)
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
@@ -31,9 +33,9 @@ function App() {
 	const [solutionCorrect, setSolutionCorrect] = useState(false)
 
 	useEffect(() => {
-		const currentCase = cases.find((c) => c.id === currentCaseId)
-		if (currentCase) {
-			setCurrentCase(currentCase)
+		const foundCase = cases.find((c) => c.id === currentCaseId)
+		if (foundCase) {
+			setCurrentCase(foundCase)
 		}
 	}, [cases, currentCaseId])
 
@@ -300,13 +302,7 @@ function App() {
 	if (!currentCase) return null
 
 	if (view === 'briefing') {
-		return (
-			<Briefing
-				beginInvestigation={beginInvestigation}
-				currentCase={currentCase}
-				setView={setView}
-			/>
-		)
+		return <Briefing beginInvestigation={beginInvestigation} />
 	}
 
 	const collectedEvidence = currentCase.evidence.filter((e) => e.collected)
@@ -321,8 +317,6 @@ function App() {
 	return (
 		<div className='flex-1 w-full h-full flex flex-col  bg-gray-900 text-gray-100'>
 			<Header
-				currentCase={currentCase}
-				setView={setView}
 				timeRemaining={timeRemaining}
 				timerActive={timerActive}
 				revealedNews={revealedNews}
@@ -336,7 +330,6 @@ function App() {
 				collectedEvidenceCount={collectedEvidence.length}
 				phoneUnlocked={phoneUnlocked}
 				revealedNewsCount={revealedNews.length}
-				view={view}
 				isNewsReaded={isNewsReaded}
 				setIsNewsReaded={setIsNewsReaded}
 			/>
@@ -349,7 +342,6 @@ function App() {
 						examineLocation={examineLocation}
 						selectedLocation={selectedLocation}
 						collectEvidence={collectEvidence}
-						currentCase={currentCase}
 					/>
 				)}
 
@@ -357,7 +349,6 @@ function App() {
 					<Evidence
 						analyzeEvidence={analyzeEvidence}
 						collectedEvidence={collectedEvidence}
-						currentCase={currentCase}
 					/>
 				)}
 
@@ -367,7 +358,6 @@ function App() {
 						checkContradiction={checkContradiction}
 						closeInterrogation={closeInterrogation}
 						contradictionMode={contradictionMode}
-						currentCase={currentCase}
 						interrogationMode={interrogationMode}
 						selectedPerson={selectedPerson}
 						selectedResponses={selectedResponses}
@@ -379,12 +369,7 @@ function App() {
 					/>
 				)}
 
-				{view === 'phone' && (
-					<Phone
-						currentCase={currentCase}
-						phoneUnlocked={phoneUnlocked}
-					/>
-				)}
+				{view === 'phone' && <Phone phoneUnlocked={phoneUnlocked} />}
 
 				{view === 'news' && <News revealedNews={revealedNews} />}
 
@@ -393,15 +378,12 @@ function App() {
 						analyzedEvidence={analyzedEvidence}
 						availablePeople={availablePeople}
 						collectedEvidence={collectedEvidence}
-						currentCase={currentCase}
 					/>
 				)}
 
 				{view === 'solution' && (
 					<Solution
-						currentCase={currentCase}
 						onWrongAnswer={onWrongAnswer}
-						setView={setView}
 						solutionCorrect={solutionCorrect}
 						solutionSubmitted={solutionSubmitted}
 						suspects={suspects}

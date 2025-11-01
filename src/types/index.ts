@@ -129,3 +129,8 @@ export interface INavigationLinks {
 	disabled?: boolean
 	badge?: boolean
 }
+
+export interface IEvidenceAnalyzedIn {
+	id: string
+	date: string
+}

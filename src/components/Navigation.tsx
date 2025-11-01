@@ -8,6 +8,7 @@ import {
 	Users,
 } from 'lucide-react'
 import type { INavigationLinks, ViewType } from '../types'
+import { useNavigationStore } from '../store/navigation'
 
 interface NavigationProps {
 	collectedEvidenceCount: number
@@ -15,7 +16,6 @@ interface NavigationProps {
 	phoneUnlocked: boolean
 	revealedNewsCount: number
 	onTabClick: (tab: ViewType) => void
-	view: ViewType
 	isNewsReaded: boolean
 	setIsNewsReaded: (isNewsReaded: boolean) => void
 }
@@ -26,9 +26,10 @@ const Navigation = ({
 	phoneUnlocked,
 	revealedNewsCount,
 	onTabClick,
-	view,
 	isNewsReaded,
 }: NavigationProps) => {
+	const { view } = useNavigationStore((state) => state)
+
 	const NAVIGATION_TABS: INavigationLinks[] = [
 		{ id: 'scene', icon: Map, label: 'Crime Scene' },
 		{
