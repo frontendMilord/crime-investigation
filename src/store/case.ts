@@ -23,30 +23,29 @@ interface ICaseState {
 
 export const useCaseStore = create<ICaseState>()(
 	devtools(
-		persist(
-			(set) => ({
-				currentCase: null,
-				setCurrentCase: (newCase: ICase | null) =>
-					set({ currentCase: newCase }),
-				cases: defaultCases,
-				setCases: (cases: ICase[]) => set({ cases }),
-				availablePeople: [],
-				setAvailablePeople: (people: IPerson[]) =>
-					set({ availablePeople: people }),
-				collectedEvidence: [],
-				setCollectedEvidence: (evidence: IEvidence[]) =>
-					set({ collectedEvidence: evidence }),
-				isNewsReaded: false,
-				setIsNewsReaded: (isNewsReaded: boolean) => set({ isNewsReaded }),
-				setTimerActive: (timerActive: boolean) => set({ timerActive }),
-				timerActive: false,
-				setTimeRemaining: (timeRemaining: number | null) =>
-					set({ timeRemaining }),
-				timeRemaining: null,
-			}),
-			{
-				name: 'case-storage',
-			}
-		)
+		// persist(
+		(set) => ({
+			currentCase: null,
+			setCurrentCase: (newCase: ICase | null) => set({ currentCase: newCase }),
+			cases: defaultCases,
+			setCases: (cases: ICase[]) => set({ cases }),
+			availablePeople: [],
+			setAvailablePeople: (people: IPerson[]) =>
+				set({ availablePeople: people }),
+			collectedEvidence: [],
+			setCollectedEvidence: (evidence: IEvidence[]) =>
+				set({ collectedEvidence: evidence }),
+			isNewsReaded: false,
+			setIsNewsReaded: (isNewsReaded: boolean) => set({ isNewsReaded }),
+			setTimerActive: (timerActive: boolean) => set({ timerActive }),
+			timerActive: false,
+			setTimeRemaining: (timeRemaining: number | null) =>
+				set({ timeRemaining }),
+			timeRemaining: null,
+		})
+		// {
+		// 	name: 'case-storage',
+		// }
+		// )
 	)
 )

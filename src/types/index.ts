@@ -6,6 +6,7 @@ export interface IEvidence {
 	description: string
 	location: string
 	collected: boolean
+	timeToProcess: number
 	analyzed: boolean
 	analysisResult?: string
 	hidden?: boolean

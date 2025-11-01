@@ -7,9 +7,7 @@ import Header from '../components/Header'
 import Navigation from '../components/Navigation'
 
 const SolutionPage = () => {
-	const { currentCase, availablePeople, setTimerActive } = useCaseStore(
-		(state) => state
-	)
+	const { currentCase, setTimerActive } = useCaseStore((state) => state)
 	const [suspects, setSuspects] = useState<IPerson[]>([])
 	const [solutionSubmitted, setSolutionSubmitted] = useState(false)
 	const [solutionCorrect, setSolutionCorrect] = useState(false)
@@ -29,8 +27,10 @@ const SolutionPage = () => {
 	}
 
 	useEffect(() => {
-		setSuspects(availablePeople.filter((person) => person.type === 'suspect'))
-	}, [availablePeople])
+		setSuspects(
+			currentCase?.people.filter((person) => person.type === 'suspect') || []
+		)
+	}, [currentCase])
 
 	if (!currentCase) return null
 

@@ -5,6 +5,7 @@ import { useCaseStore } from '../store/case'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '../consts/routes'
 import { useEffect, useState } from 'react'
+import { useEvidenceStore } from '../store/evidence'
 
 const Header = () => {
 	const {
@@ -13,7 +14,9 @@ const Header = () => {
 		setIsNewsReaded,
 		timerActive,
 		timeRemaining,
+		setCurrentCase,
 	} = useCaseStore((state) => state)
+	const { setAvailableEvidence } = useEvidenceStore()
 	const [revealedNews, setRevealedNews] = useState<IBreakingNews[]>([])
 
 	const navigate = useNavigate()
@@ -26,6 +29,14 @@ const Header = () => {
 	const onBreakingNewsClick = () => {
 		setIsNewsReaded(true)
 		navigate(ROUTES_PATHS.NEWS)
+	}
+
+	const onExitCaseClick = () => {
+		localStorage.clear()
+		setCurrentCase(null)
+		setAvailableEvidence([])
+		navigate(ROUTES_PATHS.BASE)
+		window.location.reload()
 	}
 
 	if (!currentCase) return null
@@ -64,7 +75,7 @@ const Header = () => {
 						</div>
 					)}
 					<button
-						onClick={() => navigate(ROUTES_PATHS.BASE)}
+						onClick={onExitCaseClick}
 						className='text-gray-400 hover:text-white flex items-center gap-2'
 					>
 						<Home className='w-4 h-4' />

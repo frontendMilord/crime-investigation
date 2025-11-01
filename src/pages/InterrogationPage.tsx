@@ -108,9 +108,9 @@ const InterrogationPage = () => {
 	}
 
 	useEffect(() => {
-		setSuspects(availablePeople.filter((p) => p.type === 'suspect'))
-		setWitnesses(availablePeople.filter((p) => p.type === 'witness'))
-	}, [availablePeople])
+		setSuspects(currentCase?.people.filter((p) => p.type === 'suspect') || [])
+		setWitnesses(currentCase?.people.filter((p) => p.type === 'witness') || [])
+	}, [currentCase])
 
 	useEffect(() => {
 		if (!selectedPerson) return
@@ -191,14 +191,18 @@ const InterrogationPage = () => {
 											<p className='text-sm text-gray-300 italic mb-4'>
 												"{selectedPerson.initialStatement}"
 											</p>
-											<button
-												onClick={() => startInterrogation(selectedPerson.id)}
-												className='bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded transition-all'
-											>
-												{selectedPerson.interviewed
-													? 'Continue Interrogation'
-													: 'Begin Interrogation'}
-											</button>
+											{availablePeople.find(
+												(p) => p.id === selectedPerson.id
+											) && (
+												<button
+													onClick={() => startInterrogation(selectedPerson.id)}
+													className='bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded transition-all'
+												>
+													{selectedPerson.interviewed
+														? 'Continue Interrogation'
+														: 'Begin Interrogation'}
+												</button>
+											)}
 										</div>
 									))}
 								</div>
@@ -241,14 +245,18 @@ const InterrogationPage = () => {
 											<p className='text-sm text-gray-300 italic mb-4'>
 												"{selectedPerson.initialStatement}"
 											</p>
-											<button
-												onClick={() => startInterrogation(selectedPerson.id)}
-												className='bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-all'
-											>
-												{selectedPerson.interviewed
-													? 'Continue Interview'
-													: 'Interview Witness'}
-											</button>
+											{availablePeople.find(
+												(p) => p.id === selectedPerson.id
+											) && (
+												<button
+													onClick={() => startInterrogation(selectedPerson.id)}
+													className='bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-all'
+												>
+													{selectedPerson.interviewed
+														? 'Continue Interview'
+														: 'Interview Witness'}
+												</button>
+											)}
 										</div>
 									))}
 								</div>

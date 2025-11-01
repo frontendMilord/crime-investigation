@@ -28,6 +28,7 @@ STRUCTURE:
       "location": "location1",
       "collected": false,
       "analyzed": false,
+      "timeToProcess": 120,
       "analysisResult": "Detailed forensic analysis revealing crucial information",
       "hidden": false,
       "unlockedBy": "ev2"
@@ -154,6 +155,7 @@ EVIDENCE:
 - Use "hidden: true" + "unlockedBy: evidence-id" for sequential discovery (finding X reveals Y)
 - analysisResult should contain specific, useful information
 - Some evidence should point to wrong suspects (red herrings)
+- Set timeToProcess for each piece of evidence in seconds based on how long it takes to process (from 5 to 300)
 - Link evidence to dialogue trees (people react to being confronted with evidence)
 
 PHONE RECORDS:
@@ -221,6 +223,7 @@ export const defaultCases: ICase[] = [
 					'A heavy wrench with faint blood traces found behind a crate near the dock.',
 				location: 'marina_dock',
 				collected: false,
+				timeToProcess: 180,
 				analyzed: false,
 				analysisResult:
 					'DNA confirms the victim’s blood. Partial fingerprint belongs to Hannah Reed (victim’s ex).',
@@ -232,6 +235,7 @@ export const defaultCases: ICase[] = [
 				description: 'CCTV feed covering 22:00–00:00 from the marina entrance.',
 				location: 'marina_office',
 				collected: false,
+				timeToProcess: 90,
 				analyzed: false,
 				analysisResult:
 					'Footage shows Alan Cross (business partner) entering the dock at 22:35 and leaving at 23:05. No sign of forced entry afterward.',
@@ -243,6 +247,7 @@ export const defaultCases: ICase[] = [
 				description: 'Single partial footprint near yacht ramp.',
 				location: 'marina_dock',
 				collected: false,
+				timeToProcess: 15,
 				analyzed: false,
 				analysisResult:
 					'Matches a size 10 hiking boot; brand linked to a store receipt later found in Mia’s car.',
@@ -254,6 +259,7 @@ export const defaultCases: ICase[] = [
 				description: 'Half-empty glass on the yacht’s desk.',
 				location: 'yacht_cabin',
 				collected: false,
+				timeToProcess: 30,
 				analyzed: false,
 				analysisResult:
 					'Contains fingerprints of Lucas Byrne and Alan Cross. Traces of sedatives found in the liquid.',
@@ -266,6 +272,7 @@ export const defaultCases: ICase[] = [
 					'A handwritten notebook showing recent yacht sales and commission splits.',
 				location: 'yacht_cabin',
 				collected: false,
+				timeToProcess: 20,
 				analyzed: false,
 				analysisResult:
 					'Reveals $80,000 missing from joint business account, likely embezzled by Alan Cross.',
@@ -278,6 +285,7 @@ export const defaultCases: ICase[] = [
 					'Smartphone found near the victim’s chair, screen cracked.',
 				location: 'yacht_cabin',
 				collected: false,
+				timeToProcess: 60,
 				analyzed: false,
 				analysisResult:
 					'Unlocks message history revealing threats from Hannah and a warning from an unknown number.',
@@ -289,6 +297,7 @@ export const defaultCases: ICase[] = [
 				description: 'Folded note left at marina office desk.',
 				location: 'marina_office',
 				collected: false,
+				timeToProcess: 20,
 				analyzed: false,
 				analysisResult:
 					"Handwriting matches Mia Torres. Note warns 'Lucas isn’t who he seems. He’ll hurt someone tonight.'",
@@ -300,6 +309,7 @@ export const defaultCases: ICase[] = [
 				description: 'Receipt dated same day for size 10 hiking boots.',
 				location: 'marina_office',
 				collected: false,
+				timeToProcess: 10,
 				analyzed: false,
 				analysisResult: 'Paid by Mia Torres in cash. Timestamp 18:15.',
 				hidden: true,
@@ -311,6 +321,7 @@ export const defaultCases: ICase[] = [
 				description: 'Handwritten record of visitor entries at marina gate.',
 				location: 'marina_office',
 				collected: false,
+				timeToProcess: 60,
 				analyzed: false,
 				analysisResult:
 					'Shows Hannah Reed signed in at 21:55, left blank for exit time.',

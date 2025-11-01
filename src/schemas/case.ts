@@ -7,6 +7,7 @@ export const EvidenceSchema = z.object({
 	description: z.string(),
 	location: z.string(),
 	collected: z.boolean(),
+	timeToProcess: z.number().gte(5).lte(300),
 	analyzed: z.boolean(),
 	analysisResult: z.string().optional(),
 	hidden: z.boolean().optional(),

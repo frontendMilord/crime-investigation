@@ -2,15 +2,13 @@ import { Clock, Home } from 'lucide-react'
 import { formatTime } from '../utils'
 import { useCaseStore } from '../store/case'
 import { ROUTES_PATHS } from '../consts/routes'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const BriefingPage = () => {
-	const { currentCase, timeRemaining, setTimerActive, setCurrentCase, cases } =
-		useCaseStore((state) => state)
+	const { currentCase, timeRemaining, setTimerActive } = useCaseStore(
+		(state) => state
+	)
 	const navigate = useNavigate()
-	const params = useSearchParams()
-	const id = params[0].get('id')
 
 	const beginInvestigation = () => {
 		if (timeRemaining !== null) {
@@ -18,12 +16,6 @@ const BriefingPage = () => {
 		}
 		navigate(ROUTES_PATHS.SCENE)
 	}
-
-	useEffect(() => {
-		const selectedCase = cases.find((c) => c.id === id)
-		if (!selectedCase) return
-		setCurrentCase(selectedCase)
-	}, [id, cases])
 
 	if (!currentCase) return null
 

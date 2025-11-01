@@ -10,13 +10,16 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '../consts/routes'
 
 const MenuPage = () => {
-	const { cases, setCases, setTimeRemaining } = useCaseStore((state) => state)
+	const { cases, setCases, setTimeRemaining, setCurrentCase } = useCaseStore(
+		(state) => state
+	)
 	const [copied, setCopied] = useState(false)
 	const navigate = useNavigate()
 
 	const startCase = (caseId: string) => {
 		const selectedCase = cases.find((c) => c.id === caseId)
-		navigate(`${ROUTES_PATHS.BRIEFING}?id=${caseId}`)
+		setCurrentCase(selectedCase || null)
+		navigate(ROUTES_PATHS.BRIEFING)
 
 		if (selectedCase?.timeLimit) {
 			setTimeRemaining(selectedCase.timeLimit)

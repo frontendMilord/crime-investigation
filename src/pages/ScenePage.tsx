@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useCaseStore } from '../store/case'
-import type { IEvidence } from '../types'
 import Navigation from '../components/Navigation'
 import Header from '../components/Header'
+import { useEvidenceStore } from '../store/evidence'
 
 const ScenePage = () => {
-	const { currentCase, setCases, cases } = useCaseStore((state) => state)
+	const { currentCase, setCases, cases, setCurrentCase, setCollectedEvidence } =
+		useCaseStore((state) => state)
+	const { availableEvidence } = useEvidenceStore()
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
-	const [availableEvidence, setAvailableEvidence] = useState<IEvidence[]>([])
 
 	const collectEvidence = (evidenceId: string) => {
 		if (!currentCase) return
@@ -18,6 +19,8 @@ const ScenePage = () => {
 
 		const updatedCase = { ...currentCase, evidence: updatedEvidence }
 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
+		setCurrentCase(updatedCase)
+		setCollectedEvidence(updatedEvidence.filter((e) => e.collected))
 	}
 
 	const examineLocation = (locationId: string) => {
@@ -30,26 +33,8 @@ const ScenePage = () => {
 		const updatedCase = { ...currentCase, scene: updatedScene }
 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 		setSelectedLocation(locationId)
+		setCurrentCase(updatedCase)
 	}
-
-	useEffect(() => {
-		const getAvailableEvidence = () => {
-			if (!currentCase) return
-
-			const result = currentCase.evidence.filter((ev) => {
-				if (!ev.hidden) return true
-				if (ev.unlockedBy) {
-					const unlockEvidence = currentCase.evidence.find(
-						(e) => e.id === ev.unlockedBy
-					)
-					return unlockEvidence?.collected
-				}
-				return false
-			})
-			setAvailableEvidence(result)
-		}
-		getAvailableEvidence()
-	}, [currentCase])
 
 	if (!currentCase) return null
 
