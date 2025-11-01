@@ -1,15 +1,29 @@
 import { Clock, Home } from 'lucide-react'
 import { formatTime } from '../utils'
-import { useNavigationStore } from '../store/navigation'
 import { useCaseStore } from '../store/case'
+import { ROUTES_PATHS } from '../consts/routes'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
-interface IBriefingProps {
-	beginInvestigation: () => void
-}
+const BriefingPage = () => {
+	const { currentCase, timeRemaining, setTimerActive, setCurrentCase, cases } =
+		useCaseStore((state) => state)
+	const navigate = useNavigate()
+	const params = useSearchParams()
+	const id = params[0].get('id')
 
-const Briefing = ({ beginInvestigation }: IBriefingProps) => {
-	const { setView } = useNavigationStore((state) => state)
-	const { currentCase } = useCaseStore((state) => state)
+	const beginInvestigation = () => {
+		if (timeRemaining !== null) {
+			setTimerActive(true)
+		}
+		navigate(ROUTES_PATHS.SCENE)
+	}
+
+	useEffect(() => {
+		const selectedCase = cases.find((c) => c.id === id)
+		if (!selectedCase) return
+		setCurrentCase(selectedCase)
+	}, [id, cases])
 
 	if (!currentCase) return null
 
@@ -18,7 +32,7 @@ const Briefing = ({ beginInvestigation }: IBriefingProps) => {
 			<div className='max-w-3xl mx-auto'>
 				<div className='mb-6'>
 					<button
-						onClick={() => setView('menu')}
+						onClick={() => navigate(ROUTES_PATHS.MENU)}
 						className='text-gray-400 hover:text-white flex items-center gap-2'
 					>
 						<Home className='w-4 h-4' />
@@ -60,4 +74,4 @@ const Briefing = ({ beginInvestigation }: IBriefingProps) => {
 	)
 }
 
-export default Briefing
+export default BriefingPage

@@ -121,7 +121,7 @@ export type ViewType =
 	| 'news'
 
 export interface INavigationLinks {
-	id: ViewType
+	path: string
 	icon: React.ForwardRefExoticComponent<
 		Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
 	>

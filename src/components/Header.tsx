@@ -2,29 +2,30 @@ import { Clock, Home, Newspaper } from 'lucide-react'
 import type { IBreakingNews } from '../types'
 import { formatTime } from '../utils'
 import { useCaseStore } from '../store/case'
-import { useNavigationStore } from '../store/navigation'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES_PATHS } from '../consts/routes'
+import { useEffect, useState } from 'react'
 
-interface IHeaderProps {
-	timeRemaining: number | null
-	timerActive: boolean
-	revealedNews: IBreakingNews[]
-	isNewsReaded: boolean
-	setIsNewsReaded: (isNewsReaded: boolean) => void
-}
+const Header = () => {
+	const {
+		currentCase,
+		isNewsReaded,
+		setIsNewsReaded,
+		timerActive,
+		timeRemaining,
+	} = useCaseStore((state) => state)
+	const [revealedNews, setRevealedNews] = useState<IBreakingNews[]>([])
 
-const Header = ({
-	revealedNews,
-	timeRemaining,
-	timerActive,
-	isNewsReaded,
-	setIsNewsReaded,
-}: IHeaderProps) => {
-	const { currentCase } = useCaseStore((state) => state)
-	const { setView } = useNavigationStore((state) => state)
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (!currentCase) return
+		setRevealedNews(currentCase.breakingNews?.filter((n) => n.revealed) || [])
+	}, [currentCase])
 
 	const onBreakingNewsClick = () => {
 		setIsNewsReaded(true)
-		setView('news')
+		navigate(ROUTES_PATHS.NEWS)
 	}
 
 	if (!currentCase) return null
@@ -63,7 +64,7 @@ const Header = ({
 						</div>
 					)}
 					<button
-						onClick={() => setView('menu')}
+						onClick={() => navigate(ROUTES_PATHS.BASE)}
 						className='text-gray-400 hover:text-white flex items-center gap-2'
 					>
 						<Home className='w-4 h-4' />

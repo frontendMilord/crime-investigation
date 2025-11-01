@@ -5,14 +5,25 @@ import { PROMT_FOR_AI_CASE_GENERATION } from '../consts/case'
 import { CaseSchema } from '../schemas/case'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useCaseStore } from '../store/case'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES_PATHS } from '../consts/routes'
 
-export interface IMenuProps {
-	cases: ICase[]
-	startCase: (id: string) => void
-	setCases: (cases: ICase[]) => void
-}
-const Menu = ({ cases, startCase, setCases }: IMenuProps) => {
+const MenuPage = () => {
+	const { cases, setCases, setTimeRemaining } = useCaseStore((state) => state)
 	const [copied, setCopied] = useState(false)
+	const navigate = useNavigate()
+
+	const startCase = (caseId: string) => {
+		const selectedCase = cases.find((c) => c.id === caseId)
+		navigate(`${ROUTES_PATHS.BRIEFING}?id=${caseId}`)
+
+		if (selectedCase?.timeLimit) {
+			setTimeRemaining(selectedCase.timeLimit)
+		} else {
+			setTimeRemaining(null)
+		}
+	}
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText(PROMT_FOR_AI_CASE_GENERATION)
@@ -120,4 +131,4 @@ const Menu = ({ cases, startCase, setCases }: IMenuProps) => {
 	)
 }
 
-export default Menu
+export default MenuPage
