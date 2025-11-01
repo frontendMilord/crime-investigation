@@ -21,3 +21,13 @@ export const ROUTES: { path: string; element: ReactElement }[] = [
 	{ path: ROUTES_PATHS.BOARD, element: <BoardPage /> },
 	{ path: ROUTES_PATHS.SOLUTION, element: <SolutionPage /> },
 ]
+
+export const CASE_PAGES = [
+	ROUTES_PATHS.SCENE,
+	ROUTES_PATHS.EVIDENCE,
+	ROUTES_PATHS.INTERROGATION,
+	ROUTES_PATHS.PHONE,
+	ROUTES_PATHS.NEWS,
+	ROUTES_PATHS.BOARD,
+	ROUTES_PATHS.SOLUTION,
+]

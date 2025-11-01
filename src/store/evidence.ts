@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { IEvidence } from '../types'
+import { useCaseStore } from './case'
 
 interface IEvidenceState {
 	availableEvidence: IEvidence[]
@@ -46,10 +47,13 @@ export const useEvidenceStore = create<IEvidenceState>()(
 				timeLeft: 0,
 				totalTimeLeft: 0,
 
-				setAvailableEvidence: (evidenceArr) =>
+				setAvailableEvidence: (evidenceArr) => {
+					const { setCollectedEvidence } = useCaseStore.getState()
+					setCollectedEvidence(evidenceArr.filter((e) => e.collected))
 					set(() => ({
 						availableEvidence: evidenceArr,
-					})),
+					}))
+				},
 
 				addToLab: (id) => {
 					const { availableEvidence, queue, current } = get()

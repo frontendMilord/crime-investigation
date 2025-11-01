@@ -3,16 +3,16 @@ import { formatTime } from '../utils'
 import { useCaseStore } from '../store/case'
 import { ROUTES_PATHS } from '../consts/routes'
 import { useNavigate } from 'react-router-dom'
+import { useCaseTimerStore } from '../store/caseTimer'
 
 const BriefingPage = () => {
-	const { currentCase, timeRemaining, setTimerActive } = useCaseStore(
-		(state) => state
-	)
+	const { currentCase } = useCaseStore((state) => state)
+	const { startTimer } = useCaseTimerStore()
 	const navigate = useNavigate()
 
 	const beginInvestigation = () => {
-		if (timeRemaining !== null) {
-			setTimerActive(true)
+		if (currentCase?.breakingNews) {
+			startTimer()
 		}
 		navigate(ROUTES_PATHS.SCENE)
 	}
@@ -24,7 +24,7 @@ const BriefingPage = () => {
 			<div className='max-w-3xl mx-auto'>
 				<div className='mb-6'>
 					<button
-						onClick={() => navigate(ROUTES_PATHS.MENU)}
+						onClick={() => navigate(ROUTES_PATHS.BASE)}
 						className='text-gray-400 hover:text-white flex items-center gap-2'
 					>
 						<Home className='w-4 h-4' />
@@ -44,7 +44,7 @@ const BriefingPage = () => {
 					</p>
 				</div>
 
-				{currentCase.timeLimit && (
+				{!!currentCase.timeLimit && (
 					<div className='bg-yellow-900/20 border border-yellow-500/50 p-4 rounded mb-6'>
 						<div className='flex items-center gap-2 text-yellow-500'>
 							<Clock className='w-5 h-5' />

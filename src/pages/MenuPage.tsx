@@ -10,9 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '../consts/routes'
 
 const MenuPage = () => {
-	const { cases, setCases, setTimeRemaining, setCurrentCase } = useCaseStore(
-		(state) => state
-	)
+	const { cases, setCases, setCurrentCase } = useCaseStore((state) => state)
 	const [copied, setCopied] = useState(false)
 	const navigate = useNavigate()
 
@@ -20,12 +18,6 @@ const MenuPage = () => {
 		const selectedCase = cases.find((c) => c.id === caseId)
 		setCurrentCase(selectedCase || null)
 		navigate(ROUTES_PATHS.BRIEFING)
-
-		if (selectedCase?.timeLimit) {
-			setTimeRemaining(selectedCase.timeLimit)
-		} else {
-			setTimeRemaining(null)
-		}
 	}
 
 	const handleCopy = () => {
@@ -82,16 +74,16 @@ const MenuPage = () => {
 							onClick={() => startCase(c.id)}
 							className='bg-gray-800 p-6 rounded border border-gray-700 hover:border-red-500 cursor-pointer transition-all'
 						>
-							<div className='flex justify-between items-start'>
+							<div className='flex justify-between items-center'>
 								<div>
 									<h3 className='text-xl font-semibold mb-1'>{c.title}</h3>
 									<p className='text-sm text-gray-400'>
 										Type: {c.type} | Victim: {c.victim}
 									</p>
 								</div>
-								{c.timeLimit && (
+								{!!c.timeLimit && (
 									<div className='flex items-center gap-2 text-yellow-500'>
-										<Clock className='w-4 h-4' />
+										<Clock className='size-4' />
 										<span className='text-sm'>{formatTime(c.timeLimit)}</span>
 									</div>
 								)}

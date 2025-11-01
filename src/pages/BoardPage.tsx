@@ -3,18 +3,20 @@ import { useCaseStore } from '../store/case'
 import type { IEvidence } from '../types'
 import Header from '../components/Header'
 import Navigation from '../components/Navigation'
+import { useEvidenceStore } from '../store/evidence'
 
 const BoardPage = () => {
 	const { currentCase, availablePeople, collectedEvidence } = useCaseStore(
 		(state) => state
 	)
+	const { availableEvidence } = useEvidenceStore()
 	const [analyzedEvidence, setAnalyzedEvidence] = useState<IEvidence[]>([])
 
 	useEffect(() => {
 		setAnalyzedEvidence(
-			collectedEvidence.filter((evidence) => evidence.analyzed)
+			availableEvidence.filter((evidence) => evidence.analyzed)
 		)
-	}, [collectedEvidence])
+	}, [availableEvidence])
 
 	if (!currentCase) return null
 

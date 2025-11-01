@@ -6,17 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '../consts/routes'
 import { useEffect, useState } from 'react'
 import { useEvidenceStore } from '../store/evidence'
+import { useCaseTimerStore } from '../store/caseTimer'
 
 const Header = () => {
-	const {
-		currentCase,
-		isNewsReaded,
-		setIsNewsReaded,
-		timerActive,
-		timeRemaining,
-		setCurrentCase,
-	} = useCaseStore((state) => state)
+	const { currentCase, isNewsReaded, setIsNewsReaded, setCurrentCase } =
+		useCaseStore((state) => state)
 	const { setAvailableEvidence } = useEvidenceStore()
+	const { timeRemaining, timerActive, stopTimer } = useCaseTimerStore()
 	const [revealedNews, setRevealedNews] = useState<IBreakingNews[]>([])
 
 	const navigate = useNavigate()
@@ -35,6 +31,7 @@ const Header = () => {
 		localStorage.clear()
 		setCurrentCase(null)
 		setAvailableEvidence([])
+		stopTimer()
 		navigate(ROUTES_PATHS.BASE)
 		window.location.reload()
 	}
