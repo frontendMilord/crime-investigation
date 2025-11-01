@@ -28,30 +28,27 @@ export const useCaseTimerStore = create<ICaseTimerState>()(
 					timeRemaining: null,
 					startTimer: () => {
 						const { currentCase } = useCaseStore.getState()
-						const { setTimerActive, setTimeRemaining } = get()
 						if (interval || !currentCase?.timeLimit) return
-						setTimerActive(true)
-						setTimeRemaining(currentCase.timeLimit)
+						set({ timerActive: true, timeRemaining: currentCase.timeLimit })
 						interval = setInterval(() => get().tick(), 1000)
 					},
 					resumeTimer: () => {
-						const { setTimerActive, setTimeRemaining, timeRemaining } = get()
 						if (interval) return
-						setTimerActive(true)
-						setTimeRemaining(timeRemaining)
+						set({ timerActive: true })
 						interval = setInterval(() => get().tick(), 1000)
 					},
 					stopTimer: () => {
-						const { setTimerActive, setTimeRemaining } = get()
 						if (interval) {
 							clearInterval(interval)
 							interval = null
 						}
-						setTimerActive(false)
-						setTimeRemaining(null)
+						set({
+							timeRemaining: null,
+							timerActive: false,
+						})
 					},
 					tick: () => {
-						const { timeRemaining } = get()
+						const { timeRemaining, stopTimer } = get()
 						if (timeRemaining === null) {
 							return
 						}
@@ -60,10 +57,6 @@ export const useCaseTimerStore = create<ICaseTimerState>()(
 								timeRemaining: timeRemaining - 1,
 							})
 						} else {
-							set({
-								timeRemaining: null,
-								timerActive: false,
-							})
 							stopTimer()
 						}
 					},
