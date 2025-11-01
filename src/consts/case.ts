@@ -35,116 +35,55 @@ STRUCTURE:
   ],
   "people": [ 
     {
-      "id": "suspect1",
+      "id": "person1",
       "name": "Full Name",
       "age": 30,
       "occupation": "Job Title",
-      "relationship": "How they knew the victim",
-      "type":"suspect or witness"
+      "relationship": "Connection to victim",
+      "type":"suspect"
       "available": true,
-      "initialStatement": "Their initial statement",
+      "availability": "ev3",
+      "initialStatement": "Their first statement when questioned",
       "interviewed": false,
       "dialogueTrees": [
         {
-          "id":"tree1",
-          "question":"Question to ask",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "Their answer - can reveal lies, motives, or alibis", 
-							"revealsDetail": "Important key details", 
-							followUps: ['tree2'],
-						},
-					],
-        },
-        {
-          "id":"tree2",
-          "question":"Confront with evidence",
+          "id": "tree1",
+          "question": "Question to ask",
+          "asked": false,
           "requiresEvidence": "ev1",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "How they react when confronted with specific evidence", 
-							followUps: ['tree5'],
-						},
-					],
-        },
-        {
-          "id": 'tree3',
-					"question": 'Question based on obtained information from another person',
-					"requiresPerson": 'p1',
-					"requiresResponse": 'tree5-r1',
-					"asked": false,
-					"responses": [
-						{
-							"id": 'r1',
-							"text": "Their answer - can reveal lies, motives, or alibis",
-							"followUps": ['tree5', 'tree6'],
-						},
-					],
-				},
-        {
-          "id":"tree4",
-          "question":"Question to ask to check for contradictions with specific evidence",
-          "asked":false,
-          "responses": [ 
-						{
-							"id": 'r1', 
-							"text": "Answer that contradicts with specific evidence", 
-              "revealsContradiction": 'contradiction1',
-						},
-					],
-        }
-      ], 
-      "contradictions": [
-				{
-					"id": 'contradiction1',
-					"response1": 'tree1-r1',
-					"response2": 'tree2-r1',
-					"description":
-							'Elena claimed she left at 11 PM but security footage shows 1 AM. She admitted to lying about the time.',
-							'Description that explains the contradiction',
-						"caught": false
-					}
-			]
-    },
-    {
-      "id": "witness1",
-      "name": "Witness Name",
-      "age": 25,
-      "occupation": "Job Title",
-      "relationship": "How they knew the victim",
-      "type":"witness",
-      "available": true,
-      "initialStatement": "Their initial statement",
-      "interviewed": false,
-      "dialogueTrees": [
-        {
-          "id":"tree1",
-          "question":"Question to ask",
-          "asked":false,
-          "responses": [ 
+          "requiresPerson": "person2",
+          "requiresResponse": "tree3-r1",
+          "responses": [
             {
-              "id": 'r1', 
-              "text": "Their answer - can reveal lies, motives, or alibis", 
+              "id": "r1",
+              "text": "Their response text",
+              "followUps": ["tree2", "tree3"],
+              "revealsDetail": "Key information revealed",
+              "revealsContradiction": "contradiction-id"
             }
-          ],
+          ]
         }
       ],
-      "contradictions": []
+      "contradictions": [
+        {
+          "id": "contradiction1",
+          "response1": "tree1-r1",
+          "response2": "tree3-r1",
+          "description": "Explanation of the contradiction between statements",
+          "caught": false
+        }
+      ]
     },
     {
-      "id": "witness2",
+      "id": "person2",
       "name": "Anonymous Caller",
       "age": 0,
       "occupation": "Unknown",
       "relationship": "Anonymous tip",
       "type":"witness",
       "available": false,
-      "initialStatement": "Their anonymous statement",
       "availability": "ev1",
+      "initialStatement": "Their anonymous statement",
       "interviewed": false,
       "contradictions": [],
 			"dialogueTrees": []
