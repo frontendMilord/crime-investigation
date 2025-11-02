@@ -1,6 +1,6 @@
 import { Clock, Upload, Copy } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCaseStore } from '../../store/case'
 import { ROUTES_PATHS } from '../../consts/routes'
@@ -13,6 +13,7 @@ const MenuPage = () => {
 	const { cases, setCases, setCurrentCase } = useCaseStore((state) => state)
 	const [copied, setCopied] = useState(false)
 	const navigate = useNavigate()
+	const uploadCaseInputRef = useRef<HTMLInputElement>(null)
 
 	const startCase = (caseId: string) => {
 		const selectedCase = cases.find((c) => c.id === caseId)
@@ -29,7 +30,6 @@ const MenuPage = () => {
 	const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
 		if (!file) return
-
 		const reader = new FileReader()
 		reader.onload = (e) => {
 			try {
@@ -45,6 +45,8 @@ const MenuPage = () => {
 			} catch (error) {
 				toast.error('Invalid JSON file format')
 				console.error('error uploading case file', error)
+			} finally {
+				if (uploadCaseInputRef.current) uploadCaseInputRef.current.value = ''
 			}
 		}
 		reader.readAsText(file)
@@ -99,14 +101,15 @@ const MenuPage = () => {
 						<span>Upload JSON Case File</span>
 						<input
 							type='file'
+							ref={uploadCaseInputRef}
 							accept='.json'
 							onChange={handleFileUpload}
 							className='hidden'
 						/>
 					</label>
 					<p className='text-sm text-gray-400 mt-4'>
-						Need an AI-generated case? Use the updated prompt with the new
-						interrogation system structure.
+						Need an AI-generated case? Use the following prompt to generate
+						case.
 					</p>
 					<div className='relative'>
 						<button

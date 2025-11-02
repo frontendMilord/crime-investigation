@@ -2,14 +2,14 @@ import type { ICase } from '../types'
 
 // export const defaultCases: ICase[] = []
 
-export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Create an engaging mystery with realistic clues and strategic interrogation paths.
+export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Follow the structure, if field is optional omit it. Create an engaging mystery with realistic clues and strategic interrogation paths.
 
 STRUCTURE:
 {
   "title": "Case Name",
   "type": "Murder/Theft/Kidnapping/etc",
   "victim": "Victim Name",
-  "timeLimit": 1500,
+  "timeLimit?": 1500,
   "briefing": "Detailed initial case description with key facts and circumstances",
   "scene": [
     {
@@ -30,8 +30,8 @@ STRUCTURE:
       "analyzed": false,
       "timeToProcess": 120,
       "analysisResult": "Detailed forensic analysis revealing crucial information",
-      "hidden": false,
-      "unlockedBy": "ev2"
+      "hidden?": false,
+      "unlockedBy?": "ev2"
     }
   ],
   "people": [ 
@@ -43,7 +43,7 @@ STRUCTURE:
       "relationship": "Connection to victim",
       "type":"suspect"
       "available": true,
-      "availability": "ev3",
+      "availability?": "ev3",
       "initialStatement": "Their first statement when questioned",
       "interviewed": false,
       "dialogueTrees": [
@@ -51,16 +51,16 @@ STRUCTURE:
           "id": "tree1",
           "question": "Question to ask",
           "asked": false,
-          "requiresEvidence": "ev1",
-          "requiresPerson": "person2",
-          "requiresResponse": "tree3-r1",
+          "requiresEvidence?": "ev1",
+          "requiresPerson?": "person2",
+          "requiresResponse?": "tree3-r1",
           "responses": [
             {
               "id": "r1",
               "text": "Their response text",
-              "followUps": ["tree2", "tree3"],
-              "revealsDetail": "Key information revealed",
-              "revealsContradiction": "contradiction-id"
+              "followUps?": ["tree2", "tree3"],
+              "revealsDetail?": "Key information revealed",
+              "revealsContradiction?": "contradiction-id"
             }
           ]
         }
@@ -83,7 +83,7 @@ STRUCTURE:
       "relationship": "Anonymous tip",
       "type":"witness",
       "available": false,
-      "availability": "ev1",
+      "availability?": "ev1",
       "initialStatement": "Their anonymous statement",
       "interviewed": false,
       "contradictions": [],
@@ -129,7 +129,7 @@ STRUCTURE:
 CRITICAL REQUIREMENTS:
 
 DIALOGUE TREES:
-- Each person should have 5-8 dialogue trees
+- Each person should have 8-16 dialogue trees
 - Create branching paths: early questions unlock later ones via "followUps"
 - Use "requiresEvidence" for questions that need analyzed evidence
 - Use "requiresPerson" + "requiresResponse" for cross-interrogation (confronting with other people's statements)
@@ -155,8 +155,11 @@ EVIDENCE:
 - Use "hidden: true" + "unlockedBy: evidence-id" for sequential discovery (finding X reveals Y)
 - analysisResult should contain specific, useful information
 - Some evidence should point to wrong suspects (red herrings)
-- Set timeToProcess for each piece of evidence in seconds based on how long it takes to process (from 5 to 300)
+- Set timeToProcess for each piece of evidence in seconds based on how long it takes to process (from 5 to 300, total time to proccess all evidence should be less than half of timeLimit)
 - Link evidence to dialogue trees (people react to being confronted with evidence)
+
+SCENE:
+- if evidence is hidden and needs to be unlocked it still needs to be included in scene evidenceIds 
 
 PHONE RECORDS:
 - 4-6 calls showing timeline and relationships
