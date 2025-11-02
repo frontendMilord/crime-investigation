@@ -5,8 +5,9 @@ import Header from '../../components/Header'
 import Navigation from '../../components/Navigation'
 
 const ScenePage = () => {
-	const { currentCase, setCases, cases, setCurrentCase, setCollectedEvidence } =
-		useCaseStore((state) => state)
+	const { currentCase, setCases, cases, setCurrentCase } = useCaseStore(
+		(state) => state
+	)
 	const { availableEvidence } = useEvidenceStore()
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
 
@@ -20,11 +21,16 @@ const ScenePage = () => {
 		const updatedCase = { ...currentCase, evidence: updatedEvidence }
 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 		setCurrentCase(updatedCase)
-		setCollectedEvidence(updatedEvidence.filter((e) => e.collected))
 	}
 
 	const examineLocation = (locationId: string) => {
 		if (!currentCase) return
+
+		setSelectedLocation(locationId)
+		if (
+			currentCase.scene.find((location) => location.id === locationId)?.examined
+		)
+			return
 
 		const updatedScene = currentCase.scene.map((loc) =>
 			loc.id === locationId ? { ...loc, examined: true } : loc
@@ -32,7 +38,6 @@ const ScenePage = () => {
 
 		const updatedCase = { ...currentCase, scene: updatedScene }
 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
-		setSelectedLocation(locationId)
 		setCurrentCase(updatedCase)
 	}
 

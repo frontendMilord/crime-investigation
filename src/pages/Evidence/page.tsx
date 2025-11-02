@@ -6,11 +6,10 @@ import Navigation from '../../components/Navigation'
 import { formatTime } from '../../utils'
 
 const EvidencePage = () => {
-	const { currentCase, setCases, cases, setCurrentCase } = useCaseStore(
-		(state) => state
-	)
+	const { currentCase, setCases, cases, setCurrentCase, collectedEvidence } =
+		useCaseStore((state) => state)
 	const {
-		availableEvidence,
+		// availableEvidence,
 		sendEvidenceToLab,
 		getEvidenceStatus,
 		getRemainingTime,
@@ -19,17 +18,7 @@ const EvidencePage = () => {
 	} = useEvidenceStore()
 
 	const analyzeEvidence = (evidenceId: string) => {
-		if (!currentCase) return
-
-		// const updatedEvidence = currentCase.evidence.map((e) =>
-		// 	e.id === evidenceId ? { ...e, analyzed: true } : e
-		// )
-
 		sendEvidenceToLab(evidenceId)
-
-		// const updatedCase = { ...currentCase, evidence: updatedEvidence }
-		// setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
-		// setCurrentCase(updatedCase)
 	}
 
 	if (!currentCase) return null
@@ -47,13 +36,15 @@ const EvidencePage = () => {
 						</div>
 					)}
 				</div>
-				{!availableEvidence.length ? (
+				{/* {!availableEvidence.length ? ( */}
+				{!collectedEvidence.length ? (
 					<p className='text-gray-400'>
 						No evidence collected yet. Visit the crime scene.
 					</p>
 				) : (
 					<div className='grid md:grid-cols-2 gap-6'>
-						{availableEvidence
+						{/* {availableEvidence */}
+						{collectedEvidence
 							.filter((evidence) => evidence.collected)
 							.map((evidence) => {
 								const status = getEvidenceStatus(evidence.id)

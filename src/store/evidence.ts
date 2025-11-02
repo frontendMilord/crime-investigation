@@ -50,9 +50,9 @@ export const useEvidenceStore = create<IEvidenceState>()(
 				totalTimeLeft: 0,
 
 				setAvailableEvidence: (evidenceArr) => {
-					set(() => ({
+					set({
 						availableEvidence: evidenceArr,
-					}))
+					})
 				},
 
 				sendEvidenceToLab: (id) => {
@@ -70,7 +70,7 @@ export const useEvidenceStore = create<IEvidenceState>()(
 				},
 
 				tick: () => {
-					const { current, timeLeft, queue, availableEvidence } = get()
+					const { current, timeLeft, queue } = get()
 
 					if (!current) {
 						stopTimer()
@@ -86,11 +86,11 @@ export const useEvidenceStore = create<IEvidenceState>()(
 						// mark analyzed
 						const { currentCase, setCurrentCase, setCases, cases } =
 							useCaseStore.getState()
-						const updatedEvidence = availableEvidence.map((e) =>
-							e.id === current.id ? { ...e, analyzed: true } : e
-						)
 
 						if (currentCase) {
+							const updatedEvidence = currentCase?.evidence.map((e) =>
+								e.id === current.id ? { ...e, analyzed: true } : e
+							)
 							const updatedCase = {
 								...currentCase,
 								evidence: updatedEvidence,
@@ -103,7 +103,6 @@ export const useEvidenceStore = create<IEvidenceState>()(
 
 						const next = queue[0] || null
 						set({
-							availableEvidence: updatedEvidence,
 							current: next,
 							queue: next ? queue.slice(1) : [],
 							timeLeft: next ? next.timeToProcess : 0,
