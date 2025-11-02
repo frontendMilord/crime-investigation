@@ -4,18 +4,32 @@ import { useCaseStore } from '../store/case'
 import { ROUTES_PATHS } from '../consts/routes'
 import { useNavigate } from 'react-router-dom'
 import { useCaseTimerStore } from '../store/caseTimer'
+import { useEffect, useState } from 'react'
 
 const BriefingPage = () => {
 	const { currentCase } = useCaseStore((state) => state)
-	const { startTimer } = useCaseTimerStore()
+	const { startTimer, setTimeRemaining, resumeTimer } = useCaseTimerStore()
 	const navigate = useNavigate()
+	const [startedCaseRemainingTime, setStartedCaseRemainingTime] = useState(0)
 
 	const beginInvestigation = () => {
-		if (currentCase?.breakingNews) {
+		if (startedCaseRemainingTime) {
+			setTimeRemaining(startedCaseRemainingTime)
+			resumeTimer()
+		} else if (currentCase?.timeLimit) {
 			startTimer()
 		}
 		navigate(ROUTES_PATHS.SCENE)
 	}
+
+	useEffect(() => {
+		const timeRemaining = localStorage.getItem(
+			`timeRemaining-${currentCase?.id}`
+		)
+		if (timeRemaining) {
+			setStartedCaseRemainingTime(parseInt(timeRemaining))
+		}
+	}, [currentCase?.id])
 
 	if (!currentCase) return null
 
@@ -48,9 +62,16 @@ const BriefingPage = () => {
 					<div className='bg-yellow-900/20 border border-yellow-500/50 p-4 rounded mb-6'>
 						<div className='flex items-center gap-2 text-yellow-500'>
 							<Clock className='w-5 h-5' />
-							<span className='font-semibold'>
-								Time Limit: {formatTime(currentCase.timeLimit)}
-							</span>
+							{!startedCaseRemainingTime ? (
+								<span className='font-semibold'>
+									Time Limit: {formatTime(currentCase.timeLimit)}
+								</span>
+							) : (
+								<span className='font-semibold'>
+									Time Left: {formatTime(startedCaseRemainingTime)}/
+									{formatTime(currentCase.timeLimit)}
+								</span>
+							)}
 						</div>
 					</div>
 				)}
@@ -59,7 +80,9 @@ const BriefingPage = () => {
 					onClick={beginInvestigation}
 					className='bg-red-600 hover:bg-red-700 px-6 py-3 rounded font-semibold transition-all'
 				>
-					Begin Investigation
+					{startedCaseRemainingTime
+						? 'Resume Investigation'
+						: 'Begin Investigation'}
 				</button>
 			</div>
 		</div>

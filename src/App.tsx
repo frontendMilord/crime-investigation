@@ -32,11 +32,12 @@ function App() {
 	)
 
 	useEffect(() => {
-		if (timerActive && timeRemaining === 0) {
+		if (timerActive && timeRemaining === 0 && currentCase?.id) {
 			toast.error("Time's up! Submit your solution.", { autoClose: false })
+			localStorage.removeItem(`timeRemaining-${currentCase?.id}`)
 			navigate(ROUTES_PATHS.SOLUTION)
 		}
-	}, [timerActive, timeRemaining])
+	}, [timerActive, timeRemaining, currentCase?.id])
 
 	useEffect(() => {
 		const isOnCasePage = CASE_PAGES.includes(pathname)

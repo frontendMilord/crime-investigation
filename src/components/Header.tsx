@@ -28,7 +28,9 @@ const Header = () => {
 	}
 
 	const onExitCaseClick = () => {
-		localStorage.clear()
+		localStorage.removeItem('case-timer-storage')
+		localStorage.removeItem('evidence-storage')
+		localStorage.removeItem('case-storage')
 		setCurrentCase(null)
 		setAvailableEvidence([])
 		stopTimer()

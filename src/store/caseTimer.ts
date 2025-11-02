@@ -49,6 +49,7 @@ export const useCaseTimerStore = create<ICaseTimerState>()(
 					},
 					tick: () => {
 						const { timeRemaining, stopTimer } = get()
+						const { currentCase } = useCaseStore.getState()
 						if (timeRemaining === null) {
 							return
 						}
@@ -56,6 +57,12 @@ export const useCaseTimerStore = create<ICaseTimerState>()(
 							set({
 								timeRemaining: timeRemaining - 1,
 							})
+							if (currentCase?.id) {
+								localStorage.setItem(
+									`timeRemaining-${currentCase.id}`,
+									`${timeRemaining - 1}`
+								)
+							}
 						} else {
 							stopTimer()
 						}
