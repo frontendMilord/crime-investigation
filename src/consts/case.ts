@@ -2,7 +2,7 @@ import type { ICase } from '../types'
 
 // export const defaultCases: ICase[] = []
 
-export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Follow the structure, if field is optional omit it. Create an engaging mystery with realistic clues and strategic interrogation paths.
+export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Follow the structure, optional fields marked with "?". Create an engaging mystery with realistic clues and strategic interrogation paths.
 
 STRUCTURE:
 {
@@ -133,8 +133,8 @@ DIALOGUE TREES:
 - Create branching paths: early questions unlock later ones via "followUps"
 - Use "requiresEvidence" for questions that need analyzed evidence
 - Use "requiresPerson" + "requiresResponse" for cross-interrogation (confronting with other people's statements)
-- Some trees should be available immediately, others locked behind requirements
-- Include "revealsDetail" for important clues discovered through questioning
+- At the start 2-4 trees should be available immediately, others locked behind requirements
+- For some trees include "revealsDetail" for important clues discovered through questioning
 - Design trees so asking questions in different orders reveals different information
 
 CONTRADICTIONS:
