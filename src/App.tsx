@@ -6,7 +6,7 @@ import { useCaseTimerStore } from './store/caseTimer'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from './consts/routes'
 import { CASE_PAGES } from './consts/router'
-import type { IEvidence } from './types'
+import type { IBreakingNews, IEvidence } from './types'
 
 function App() {
 	const {
@@ -57,7 +57,7 @@ function App() {
 				(p) => p.interviewed
 			).length
 
-			let isNewsRevealedStatusChanged = false
+			const newsRevealedStatusChanged: IBreakingNews[] = []
 
 			const updatedNews = currentCase.breakingNews.map((news) => {
 				if (news.revealed) return news
@@ -66,7 +66,7 @@ function App() {
 					const requiredCount = parseInt(news.triggerCondition.split('-')[2])
 					if (analyzedCount >= requiredCount && !news.revealed) {
 						setIsNewsReaded(false)
-						isNewsRevealedStatusChanged = true
+						newsRevealedStatusChanged.push(news)
 						return { ...news, revealed: true }
 					}
 				}
@@ -75,7 +75,7 @@ function App() {
 					const requiredCount = parseInt(news.triggerCondition.split('-')[2])
 					if (interviewedCount >= requiredCount && !news.revealed) {
 						setIsNewsReaded(false)
-						isNewsRevealedStatusChanged = true
+						newsRevealedStatusChanged.push(news)
 						return { ...news, revealed: true }
 					}
 				}
@@ -83,11 +83,13 @@ function App() {
 				return news
 			})
 
-			if (isNewsRevealedStatusChanged) {
+			if (newsRevealedStatusChanged.length) {
+				newsRevealedStatusChanged.forEach((n) => {
+					toast.warning(`News revealed: ${n.headline}`, { autoClose: 10000 })
+				})
 				const updatedCase = { ...currentCase, breakingNews: updatedNews }
 				setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 				setCurrentCase(updatedCase)
-				console.log('news', updatedCase.breakingNews)
 			}
 		}
 		checkBreakingNews()

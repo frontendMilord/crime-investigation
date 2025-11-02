@@ -710,6 +710,14 @@ export const defaultCases: ICase[] = [
 					'Sources reveal heated breakup and financial disputes between Lucas Byrne and Hannah Reed.',
 				revealed: false,
 			},
+			{
+				id: 'news3',
+				triggerCondition: 'person-interviewed-2',
+				headline: 'Another news headline',
+				content:
+					'Sources reveal heated breakup and financial disputes between Lucas Byrne and Hannah Reed.',
+				revealed: false,
+			},
 		],
 		solution: {
 			culprit: 'person1',
