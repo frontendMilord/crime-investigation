@@ -17,7 +17,12 @@ function App() {
 		setAvailablePeople,
 		setCurrentCase,
 	} = useCaseStore((state) => state)
-	const { setAvailableEvidence, availableEvidence } = useEvidenceStore()
+	const {
+		setAvailableEvidence,
+		availableEvidence,
+		totalTimeLeft,
+		resumeProcessing,
+	} = useEvidenceStore()
 	const { timeRemaining, timerActive, resumeTimer } = useCaseTimerStore()
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
@@ -37,7 +42,7 @@ function App() {
 		if (timeRemaining && timeRemaining > 0 && isOnCasePage) {
 			resumeTimer() // resumes ticking from persisted value
 		}
-	}, [])
+	}, [pathname, timeRemaining])
 
 	// const checkBreakingNews = () => {
 	// 	if (!currentCase || !currentCase.breakingNews) return
@@ -164,6 +169,14 @@ function App() {
 			prevAnalyzedEvidence.current = analyzedEvidence
 		}
 	}, [availableEvidence])
+
+	useEffect(() => {
+		if (!totalTimeLeft) return
+		const isOnCasePage = CASE_PAGES.includes(pathname)
+		if (isOnCasePage) {
+			resumeProcessing()
+		}
+	}, [totalTimeLeft, pathname])
 
 	return <></>
 }

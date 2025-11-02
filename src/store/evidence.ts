@@ -13,6 +13,7 @@ interface IEvidenceState {
 	addToLab: (id: string) => void
 	tick: () => void
 	startProcessing: () => void
+	resumeProcessing: () => void
 	getEvidenceStatus: (id: string) => 'available' | 'pending' | 'analyzed'
 	getRemainingTime: (id: string) => number | null
 }
@@ -25,7 +26,8 @@ export const useEvidenceStore = create<IEvidenceState>()(
 			const recalcTotal = () => {
 				const { queue, current, timeLeft } = get()
 				const queueTime = queue.reduce((acc, e) => acc + e.timeToProcess, 0)
-				return queueTime + (current ? timeLeft : 0)
+				const totalTimeLeft = queueTime + (current ? timeLeft : 0)
+				return totalTimeLeft - 1 <= 0 ? 0 : totalTimeLeft - 1
 			}
 
 			const startTimer = () => {
@@ -110,6 +112,10 @@ export const useEvidenceStore = create<IEvidenceState>()(
 						queue: queue.slice(1),
 						timeLeft: next.timeToProcess,
 					})
+					startTimer()
+				},
+
+				resumeProcessing: () => {
 					startTimer()
 				},
 
