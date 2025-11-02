@@ -134,30 +134,6 @@ function App() {
 	}, [currentCase])
 
 	useEffect(() => {
-		if (!availableEvidence.length) return
-		const analyzedEvidence = availableEvidence.filter(
-			(evidence) => evidence.analyzed
-		)
-		const newAnalyzedEvidence = analyzedEvidence.find(
-			(e) => !prevAnalyzedEvidence?.current?.find((aE) => aE.id === e.id)
-		)
-		if (newAnalyzedEvidence) {
-			toast.warning(
-				`Evidence "${newAnalyzedEvidence.name}" has been analyzed!`,
-				{ autoClose: 5000, onClick: () => navigate(ROUTES_PATHS.EVIDENCE) }
-			)
-			prevAnalyzedEvidence.current = analyzedEvidence
-
-			if (newAnalyzedEvidence.id === currentCase?.phoneRecords?.unlockedBy) {
-				toast.warning(`Phone records now are unlocked!`, {
-					autoClose: 10000,
-					onClick: () => navigate(ROUTES_PATHS.PHONE),
-				})
-			}
-		}
-	}, [availableEvidence, currentCase?.phoneRecords?.unlockedBy])
-
-	useEffect(() => {
 		const getAvailableEvidence = () => {
 			if (!currentCase) return
 
@@ -191,6 +167,30 @@ function App() {
 		}
 		getAvailableEvidence()
 	}, [currentCase, cases])
+
+	useEffect(() => {
+		if (!availableEvidence.length) return
+		const analyzedEvidence = availableEvidence.filter(
+			(evidence) => evidence.analyzed
+		)
+		const newAnalyzedEvidence = analyzedEvidence.find(
+			(e) => !prevAnalyzedEvidence?.current?.find((aE) => aE.id === e.id)
+		)
+		if (newAnalyzedEvidence) {
+			toast.warning(
+				`Evidence "${newAnalyzedEvidence.name}" has been analyzed!`,
+				{ autoClose: 5000, onClick: () => navigate(ROUTES_PATHS.EVIDENCE) }
+			)
+			prevAnalyzedEvidence.current = analyzedEvidence
+
+			if (newAnalyzedEvidence.id === currentCase?.phoneRecords?.unlockedBy) {
+				toast.warning(`Phone records now are unlocked!`, {
+					autoClose: 10000,
+					onClick: () => navigate(ROUTES_PATHS.PHONE),
+				})
+			}
+		}
+	}, [availableEvidence, currentCase?.phoneRecords?.unlockedBy])
 
 	useEffect(() => {
 		if (!totalTimeLeft) return

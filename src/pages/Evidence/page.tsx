@@ -13,6 +13,7 @@ const EvidencePage = () => {
 		getRemainingTime,
 		totalTimeLeft,
 		current,
+		queue,
 	} = useEvidenceStore()
 
 	const analyzeEvidence = (evidenceId: string) => {
@@ -28,7 +29,7 @@ const EvidencePage = () => {
 			<div className='flex-1 w-full flex flex-col justify-start max-w-7xl mx-auto p-8'>
 				<div className='flex gap-x-3 justify-between items-center mb-6'>
 					<h2 className='text-2xl font-bold'>Evidence Locker</h2>
-					{!!totalTimeLeft && (
+					{!!totalTimeLeft && !!queue.length && (
 						<div className='text-lg font-medium'>
 							Total time to process: {formatTime(totalTimeLeft)}
 						</div>
