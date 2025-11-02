@@ -15,6 +15,7 @@ const EvidencePage = () => {
 		getEvidenceStatus,
 		getRemainingTime,
 		totalTimeLeft,
+		current,
 	} = useEvidenceStore()
 
 	const analyzeEvidence = (evidenceId: string) => {
@@ -114,9 +115,19 @@ const EvidencePage = () => {
 										)}
 
 										{status === 'pending' && !!time && (
-											<div className='bg-purple-600 px-4 py-2 rounded text-sm transition-all flex items-center gap-2'>
+											<div
+												className={`${
+													current?.id === evidence.id
+														? 'bg-yellow-600 '
+														: 'bg-purple-600/20'
+												} px-4 py-2 rounded text-sm transition-all flex items-center gap-2`}
+											>
 												<Loader className='w-4 h-4 animate-spin' />
-												<div>Analyzing in Lab...</div>
+												<div>
+													{current?.id === evidence.id
+														? 'Analyzing in Lab...'
+														: 'Waiting in line...'}
+												</div>
 											</div>
 										)}
 									</div>

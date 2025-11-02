@@ -130,13 +130,28 @@ function App() {
 					const unlockEvidence = currentCase.evidence.find(
 						(e) => e.id === person.availability
 					)
-					return unlockEvidence?.collected || false
+					if (unlockEvidence?.analyzed && !person.available) {
+						person.available = true
+						const updatedCase = {
+							...currentCase,
+							people: [
+								...currentCase.people.map((p) =>
+									p.id === person.id ? { ...person, available: true } : p
+								),
+							],
+						}
+						setCurrentCase(updatedCase)
+						setCases(
+							cases.map((c) => (c.id === currentCase.id ? updatedCase : c))
+						)
+					}
+					return unlockEvidence?.analyzed || false
 				}
 				return false
 			})
 		}
 		setAvailablePeople(getAvailablePeople())
-	}, [currentCase])
+	}, [currentCase, cases])
 
 	useEffect(() => {
 		if (!currentCase) return

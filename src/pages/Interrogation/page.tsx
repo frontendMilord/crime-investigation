@@ -13,7 +13,7 @@ const InterrogationPage = () => {
 
 	const startInterrogation = (personId: string) => {
 		const person = availablePeople.find((p) => p.id === personId)
-		if (!person) return
+		if (!person || !person.available) return
 		setSelectedPerson(person)
 		setInterrogationMode(true)
 		// setContradictionMode(false)

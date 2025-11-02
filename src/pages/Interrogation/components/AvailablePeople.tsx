@@ -7,14 +7,14 @@ interface IAvailablePersonProps {
 }
 
 const AvailablePeople = ({ startInterrogation }: IAvailablePersonProps) => {
-	const { currentCase, availablePeople } = useCaseStore()
+	const { availablePeople } = useCaseStore()
 	const [suspects, setSuspects] = useState<IPerson[]>([])
 	const [witnesses, setWitnesses] = useState<IPerson[]>([])
 
 	useEffect(() => {
 		const suspects: IPerson[] = []
 		const witnesses: IPerson[] = []
-		currentCase?.people.forEach((p) => {
+		availablePeople.forEach((p) => {
 			if (p.type === 'suspect') {
 				suspects.push(p)
 			} else if (p.type === 'witness') {
@@ -23,7 +23,7 @@ const AvailablePeople = ({ startInterrogation }: IAvailablePersonProps) => {
 		})
 		setSuspects(suspects.sort((a, b) => +a.interviewed - +b.interviewed))
 		setWitnesses(witnesses.sort((a, b) => +a.interviewed - +b.interviewed))
-	}, [currentCase?.people])
+	}, [availablePeople])
 
 	return (
 		<div>
@@ -80,7 +80,7 @@ const AvailablePeople = ({ startInterrogation }: IAvailablePersonProps) => {
 				</div>
 			)}
 
-			{witnesses.length > 0 && (
+			{!!witnesses.length && (
 				<div>
 					<h3 className='text-xl font-semibold mb-4 text-blue-400'>
 						Witnesses
@@ -116,7 +116,7 @@ const AvailablePeople = ({ startInterrogation }: IAvailablePersonProps) => {
 								<p className='text-sm text-gray-300 italic mb-4'>
 									"{selectedPerson.initialStatement}"
 								</p>
-								{availablePeople.find((p) => p.id === selectedPerson.id) && (
+								{!!selectedPerson.dialogueTrees.length && (
 									<button
 										onClick={() => startInterrogation(selectedPerson.id)}
 										className='bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-all'
