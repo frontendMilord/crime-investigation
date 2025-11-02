@@ -134,6 +134,23 @@ function App() {
 	}, [currentCase])
 
 	useEffect(() => {
+		if (!availableEvidence.length) return
+		const analyzedEvidence = availableEvidence.filter(
+			(evidence) => evidence.analyzed
+		)
+		const newAnalyzedEvidence = analyzedEvidence.find(
+			(e) => !prevAnalyzedEvidence?.current?.find((aE) => aE.id === e.id)
+		)
+		if (newAnalyzedEvidence) {
+			toast.warning(
+				`Evidence "${newAnalyzedEvidence.name}" has been analyzed!`,
+				{ autoClose: 5000, onClick: () => navigate(ROUTES_PATHS.EVIDENCE) }
+			)
+			prevAnalyzedEvidence.current = analyzedEvidence
+		}
+	}, [availableEvidence])
+
+	useEffect(() => {
 		const getAvailableEvidence = () => {
 			if (!currentCase) return
 
@@ -143,29 +160,30 @@ function App() {
 					const unlockEvidence = currentCase.evidence.find(
 						(e) => e.id === ev.unlockedBy
 					)
-					return unlockEvidence?.analyzed
+					if (unlockEvidence?.analyzed) {
+						const updatedCase = {
+							...currentCase,
+							evidence: currentCase.evidence.map((e) =>
+								e.id === ev.id ? { ...e, hidden: false } : e
+							),
+						}
+						setCurrentCase(updatedCase)
+						setCases(
+							cases.map((c) => (c.id === currentCase.id ? updatedCase : c))
+						)
+						toast.warn(`Evidence "${ev.name}" has been unlocked!`, {
+							autoClose: 10000,
+							onClick: () => navigate(ROUTES_PATHS.SCENE),
+						})
+						return true
+					}
 				}
 				return false
 			})
 			setAvailableEvidence(result)
-			prevAnalyzedEvidence.current = result.filter((e) => e.analyzed)
 		}
 		getAvailableEvidence()
-	}, [currentCase])
-
-	useEffect(() => {
-		if (!availableEvidence.length) return
-		const analyzedEvidence = availableEvidence.filter(
-			(evidence) => evidence.analyzed
-		)
-		const newAnalyzedEvidence = analyzedEvidence.find(
-			(e) => !prevAnalyzedEvidence?.current?.find((aE) => aE.id === e.id)
-		)
-		if (newAnalyzedEvidence) {
-			toast.warning(`Evidence "${newAnalyzedEvidence.name}" has been analyzed!`)
-			prevAnalyzedEvidence.current = analyzedEvidence
-		}
-	}, [availableEvidence])
+	}, [currentCase, cases])
 
 	useEffect(() => {
 		if (!totalTimeLeft) return

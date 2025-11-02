@@ -97,7 +97,7 @@ const ScenePage = () => {
 														<p className='text-xs text-gray-400'>
 															{evidence.description}
 														</p>
-														{evidence.hidden && evidence.unlockedBy && (
+														{evidence.unlockedBy && (
 															<p className='text-xs text-yellow-500 mt-1'>
 																🔓 Newly discovered!
 															</p>
