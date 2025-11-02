@@ -11,7 +11,7 @@ const EvidencePage = () => {
 	)
 	const {
 		availableEvidence,
-		addToLab,
+		sendEvidenceToLab,
 		getEvidenceStatus,
 		getRemainingTime,
 		totalTimeLeft,
@@ -24,7 +24,7 @@ const EvidencePage = () => {
 		// 	e.id === evidenceId ? { ...e, analyzed: true } : e
 		// )
 
-		addToLab(evidenceId)
+		sendEvidenceToLab(evidenceId)
 
 		// const updatedCase = { ...currentCase, evidence: updatedEvidence }
 		// setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))

@@ -223,7 +223,7 @@ export const defaultCases: ICase[] = [
 					'A heavy wrench with faint blood traces found behind a crate near the dock.',
 				location: 'marina_dock',
 				collected: false,
-				timeToProcess: 180,
+				timeToProcess: 5,
 				analyzed: false,
 				analysisResult:
 					'DNA confirms the victim’s blood. Partial fingerprint belongs to Hannah Reed (victim’s ex).',
@@ -235,7 +235,7 @@ export const defaultCases: ICase[] = [
 				description: 'CCTV feed covering 22:00–00:00 from the marina entrance.',
 				location: 'marina_office',
 				collected: false,
-				timeToProcess: 90,
+				timeToProcess: 10,
 				analyzed: false,
 				analysisResult:
 					'Footage shows Alan Cross (business partner) entering the dock at 22:35 and leaving at 23:05. No sign of forced entry afterward.',

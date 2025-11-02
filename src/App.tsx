@@ -16,6 +16,7 @@ function App() {
 		setCases,
 		setAvailablePeople,
 		setCurrentCase,
+		setCollectedEvidence,
 	} = useCaseStore((state) => state)
 	const {
 		setAvailableEvidence,
@@ -134,6 +135,11 @@ function App() {
 			})
 		}
 		setAvailablePeople(getAvailablePeople())
+	}, [currentCase])
+
+	useEffect(() => {
+		if (!currentCase) return
+		setCollectedEvidence(currentCase.evidence.filter((e) => e.collected))
 	}, [currentCase])
 
 	useEffect(() => {

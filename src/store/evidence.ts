@@ -10,7 +10,7 @@ interface IEvidenceState {
 	timeLeft: number
 	totalTimeLeft: number
 	setAvailableEvidence: (evidenceArr: IEvidence[]) => void
-	addToLab: (id: string) => void
+	sendEvidenceToLab: (id: string) => void
 	tick: () => void
 	startProcessing: () => void
 	resumeProcessing: () => void
@@ -50,14 +50,12 @@ export const useEvidenceStore = create<IEvidenceState>()(
 				totalTimeLeft: 0,
 
 				setAvailableEvidence: (evidenceArr) => {
-					const { setCollectedEvidence } = useCaseStore.getState()
-					setCollectedEvidence(evidenceArr.filter((e) => e.collected))
 					set(() => ({
 						availableEvidence: evidenceArr,
 					}))
 				},
 
-				addToLab: (id) => {
+				sendEvidenceToLab: (id) => {
 					const { availableEvidence, queue, current } = get()
 					const evidence = availableEvidence.find(
 						(e) => e.id === id && !e.analyzed
@@ -86,9 +84,23 @@ export const useEvidenceStore = create<IEvidenceState>()(
 						})
 					} else {
 						// mark analyzed
+						const { currentCase, setCurrentCase, setCases, cases } =
+							useCaseStore.getState()
 						const updatedEvidence = availableEvidence.map((e) =>
 							e.id === current.id ? { ...e, analyzed: true } : e
 						)
+
+						if (currentCase) {
+							const updatedCase = {
+								...currentCase,
+								evidence: updatedEvidence,
+							}
+							setCurrentCase(updatedCase)
+							setCases(
+								cases.map((c) => (c.id === currentCase.id ? updatedCase : c))
+							)
+						}
+
 						const next = queue[0] || null
 						set({
 							availableEvidence: updatedEvidence,
