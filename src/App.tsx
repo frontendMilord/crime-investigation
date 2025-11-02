@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useCaseStore } from './store/case'
 import { toast } from 'react-toastify'
 import { useEvidenceStore } from './store/evidence'
@@ -6,6 +6,7 @@ import { useCaseTimerStore } from './store/caseTimer'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from './consts/routes'
 import { CASE_PAGES } from './consts/router'
+import type { IEvidence } from './types'
 
 function App() {
 	const {
@@ -16,10 +17,13 @@ function App() {
 		setAvailablePeople,
 		setCurrentCase,
 	} = useCaseStore((state) => state)
-	const { setAvailableEvidence } = useEvidenceStore()
+	const { setAvailableEvidence, availableEvidence } = useEvidenceStore()
 	const { timeRemaining, timerActive, resumeTimer } = useCaseTimerStore()
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
+	const prevAnalyzedEvidence = useRef<IEvidence[] | null>(
+		availableEvidence.filter((e) => e.analyzed)
+	)
 
 	useEffect(() => {
 		if (timerActive && timeRemaining === 0) {
@@ -142,9 +146,24 @@ function App() {
 				return false
 			})
 			setAvailableEvidence(result)
+			prevAnalyzedEvidence.current = result.filter((e) => e.analyzed)
 		}
 		getAvailableEvidence()
 	}, [currentCase])
+
+	useEffect(() => {
+		if (!availableEvidence.length) return
+		const analyzedEvidence = availableEvidence.filter(
+			(evidence) => evidence.analyzed
+		)
+		const newAnalyzedEvidence = analyzedEvidence.find(
+			(e) => !prevAnalyzedEvidence?.current?.find((aE) => aE.id === e.id)
+		)
+		if (newAnalyzedEvidence) {
+			toast.warning(`Evidence "${newAnalyzedEvidence.name}" has been analyzed!`)
+			prevAnalyzedEvidence.current = analyzedEvidence
+		}
+	}, [availableEvidence])
 
 	return <></>
 }
