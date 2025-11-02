@@ -147,8 +147,15 @@ function App() {
 				{ autoClose: 5000, onClick: () => navigate(ROUTES_PATHS.EVIDENCE) }
 			)
 			prevAnalyzedEvidence.current = analyzedEvidence
+
+			if (newAnalyzedEvidence.id === currentCase?.phoneRecords?.unlockedBy) {
+				toast.warning(`Phone records now are unlocked!`, {
+					autoClose: 10000,
+					onClick: () => navigate(ROUTES_PATHS.PHONE),
+				})
+			}
 		}
-	}, [availableEvidence])
+	}, [availableEvidence, currentCase?.phoneRecords?.unlockedBy])
 
 	useEffect(() => {
 		const getAvailableEvidence = () => {

@@ -285,7 +285,7 @@ export const defaultCases: ICase[] = [
 					'Smartphone found near the victim’s chair, screen cracked.',
 				location: 'yacht_cabin',
 				collected: false,
-				timeToProcess: 60,
+				timeToProcess: 10,
 				analyzed: false,
 				analysisResult:
 					'Unlocks message history revealing threats from Hannah and a warning from an unknown number.',
