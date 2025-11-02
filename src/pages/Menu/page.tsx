@@ -1,13 +1,13 @@
 import { Clock, Upload, Copy } from 'lucide-react'
-import type { ICase } from '../types'
-import { formatTime } from '../utils'
-import { PROMT_FOR_AI_CASE_GENERATION } from '../consts/case'
-import { CaseSchema } from '../schemas/case'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { useCaseStore } from '../store/case'
 import { useNavigate } from 'react-router-dom'
-import { ROUTES_PATHS } from '../consts/routes'
+import { useCaseStore } from '../../store/case'
+import { ROUTES_PATHS } from '../../consts/routes'
+import { PROMT_FOR_AI_CASE_GENERATION } from '../../consts/case'
+import { CaseSchema } from '../../schemas/case'
+import { formatTime } from '../../utils'
+import type { ICase } from '../../types'
 
 const MenuPage = () => {
 	const { cases, setCases, setCurrentCase } = useCaseStore((state) => state)

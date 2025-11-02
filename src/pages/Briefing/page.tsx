@@ -1,10 +1,10 @@
 import { Clock, Home } from 'lucide-react'
-import { formatTime } from '../utils'
-import { useCaseStore } from '../store/case'
-import { ROUTES_PATHS } from '../consts/routes'
 import { useNavigate } from 'react-router-dom'
-import { useCaseTimerStore } from '../store/caseTimer'
 import { useEffect, useState } from 'react'
+import { useCaseStore } from '../../store/case'
+import { useCaseTimerStore } from '../../store/caseTimer'
+import { ROUTES_PATHS } from '../../consts/routes'
+import { formatTime } from '../../utils'
 
 const BriefingPage = () => {
 	const { currentCase } = useCaseStore((state) => state)

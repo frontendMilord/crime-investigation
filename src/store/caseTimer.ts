@@ -38,9 +38,13 @@ export const useCaseTimerStore = create<ICaseTimerState>()(
 						interval = setInterval(() => get().tick(), 1000)
 					},
 					stopTimer: () => {
+						const { currentCase } = useCaseStore.getState()
 						if (interval) {
 							clearInterval(interval)
 							interval = null
+						}
+						if (currentCase?.id) {
+							localStorage.removeItem(`timeRemaining-${currentCase.id}`)
 						}
 						set({
 							timeRemaining: null,

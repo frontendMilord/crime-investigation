@@ -1,14 +1,14 @@
 import type { ReactElement } from 'react'
 import { ROUTES_PATHS } from './routes'
-import MenuPage from '../pages/MenuPage'
-import BriefingPage from '../pages/BriefingPage'
-import ScenePage from '../pages/ScenePage'
-import EvidencePage from '../pages/EvidencePage'
-import InterrogationPage from '../pages/InterrogationPage'
-import PhonePage from '../pages/PhonePage'
-import NewsPage from '../pages/NewsPage'
-import BoardPage from '../pages/BoardPage'
-import SolutionPage from '../pages/SolutionPage'
+import MenuPage from '../pages/Menu/page'
+import BriefingPage from '../pages/Briefing/page'
+import ScenePage from '../pages/Scene/page'
+import EvidencePage from '../pages/Evidence/page'
+import InterrogationPage from '../pages/Interrogation/page'
+import PhonePage from '../pages/Phone/page'
+import NewsPage from '../pages/News/page'
+import BoardPage from '../pages/Board/page'
+import SolutionPage from '../pages/Solution/page'
 
 export const ROUTES: { path: string; element: ReactElement }[] = [
 	{ path: ROUTES_PATHS.BASE, element: <MenuPage /> },

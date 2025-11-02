@@ -1,9 +1,9 @@
 import { Beaker, Loader } from 'lucide-react'
-import { useCaseStore } from '../store/case'
-import Navigation from '../components/Navigation'
-import Header from '../components/Header'
-import { useEvidenceStore } from '../store/evidence'
-import { formatTime } from '../utils'
+import { useCaseStore } from '../../store/case'
+import { useEvidenceStore } from '../../store/evidence'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
+import { formatTime } from '../../utils'
 
 const EvidencePage = () => {
 	const { currentCase, setCases, cases, setCurrentCase } = useCaseStore(

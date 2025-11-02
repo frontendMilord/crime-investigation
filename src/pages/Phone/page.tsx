@@ -1,8 +1,8 @@
 import { MessageSquare, Phone as PhoneIcon } from 'lucide-react'
-import { useCaseStore } from '../store/case'
 import { useEffect, useState } from 'react'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
+import { useCaseStore } from '../../store/case'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
 
 const PhonePage = () => {
 	const { currentCase } = useCaseStore((state) => state)

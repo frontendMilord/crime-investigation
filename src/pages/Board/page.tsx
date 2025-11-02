@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useCaseStore } from '../store/case'
-import type { IEvidence } from '../types'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
-import { useEvidenceStore } from '../store/evidence'
+import { useCaseStore } from '../../store/case'
+import { useEvidenceStore } from '../../store/evidence'
+import type { IEvidence } from '../../types'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
 
 const BoardPage = () => {
 	const { currentCase, availablePeople, collectedEvidence } = useCaseStore(

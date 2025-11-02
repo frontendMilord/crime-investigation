@@ -1,9 +1,9 @@
 import { Newspaper } from 'lucide-react'
-import type { IBreakingNews } from '../types'
-import { useCaseStore } from '../store/case'
 import { useEffect, useState } from 'react'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
+import { useCaseStore } from '../../store/case'
+import type { IBreakingNews } from '../../types'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
 
 const NewsPage = () => {
 	const { currentCase } = useCaseStore((state) => state)

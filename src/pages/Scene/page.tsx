@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useCaseStore } from '../store/case'
-import Navigation from '../components/Navigation'
-import Header from '../components/Header'
-import { useEvidenceStore } from '../store/evidence'
+import { useCaseStore } from '../../store/case'
+import { useEvidenceStore } from '../../store/evidence'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
 
 const ScenePage = () => {
 	const { currentCase, setCases, cases, setCurrentCase, setCollectedEvidence } =

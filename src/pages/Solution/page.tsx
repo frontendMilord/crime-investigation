@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom'
-import { useCaseStore } from '../store/case'
-import type { IPerson } from '../types'
-import { ROUTES_PATHS } from '../consts/routes'
 import { useEffect, useState } from 'react'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
+import { useCaseStore } from '../../store/case'
+import type { IPerson } from '../../types'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
+import { ROUTES_PATHS } from '../../consts/routes'
+import { useCaseTimerStore } from '../../store/caseTimer'
 
 const SolutionPage = () => {
-	const { currentCase, setTimerActive } = useCaseStore((state) => state)
+	const { currentCase } = useCaseStore((state) => state)
+	const { stopTimer } = useCaseTimerStore()
 	const [suspects, setSuspects] = useState<IPerson[]>([])
 	const [solutionSubmitted, setSolutionSubmitted] = useState(false)
 	const [solutionCorrect, setSolutionCorrect] = useState(false)
@@ -23,7 +25,7 @@ const SolutionPage = () => {
 		const correct = culpritId === currentCase.solution.culprit
 		setSolutionCorrect(correct)
 		setSolutionSubmitted(true)
-		setTimerActive(false)
+		stopTimer()
 	}
 
 	useEffect(() => {

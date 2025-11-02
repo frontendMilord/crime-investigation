@@ -1,15 +1,15 @@
 import { AlertTriangle, X } from 'lucide-react'
-import type { IDialogueTree, IPerson } from '../types'
+import type { IDialogueTree, IPerson } from '../../types'
 import { useEffect, useState } from 'react'
-import { useCaseStore } from '../store/case'
+import { useCaseStore } from '../../store/case'
 import { toast } from 'react-toastify'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
+import Header from '../../components/Header'
+import Navigation from '../../components/Navigation'
+import AvailablePeople from './components/AvailablePeople'
 
 const InterrogationPage = () => {
-	const { currentCase, availablePeople, cases, setCases } = useCaseStore(
-		(state) => state
-	)
+	const { currentCase, availablePeople, cases, setCases, setCurrentCase } =
+		useCaseStore((state) => state)
 	const [selectedPerson, setSelectedPerson] = useState<IPerson | null>(null)
 	const [askedTrees, setAskedTrees] = useState<IDialogueTree[]>([])
 	const [availableTrees, setAvailableTrees] = useState<IDialogueTree[]>([])
@@ -75,6 +75,7 @@ const InterrogationPage = () => {
 			})
 
 			const updatedCase = { ...currentCase, people: updatedPeople }
+			setCurrentCase(updatedCase)
 			setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 
 			toast.success(`Contradiction found! ${contradiction.description}`, {
@@ -104,6 +105,7 @@ const InterrogationPage = () => {
 			return p
 		})
 		const updatedCase = { ...currentCase, people: updatedPeople }
+		setCurrentCase(updatedCase)
 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
 	}
 
@@ -150,6 +152,7 @@ const InterrogationPage = () => {
 			<Header />
 			<Navigation />
 			<div className='flex-1 w-full flex flex-col justify-start max-w-7xl mx-auto p-8'>
+				{!interrogationMode && <AvailablePeople />}
 				{!interrogationMode && (
 					<div>
 						<h2 className='text-2xl font-bold mb-6'>Interrogation Room</h2>
