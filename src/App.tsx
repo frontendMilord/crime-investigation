@@ -46,79 +46,52 @@ function App() {
 		}
 	}, [pathname, timeRemaining])
 
-	// const checkBreakingNews = () => {
-	// 	if (!currentCase || !currentCase.breakingNews) return
+	useEffect(() => {
+		const checkBreakingNews = () => {
+			if (!currentCase || !currentCase.breakingNews) return
 
-	// 	const analyzedCount = currentCase.evidence.filter((e) => e.analyzed).length
-	// 	const interviewedCount = currentCase.people.filter(
-	// 		(p) => p.interviewed
-	// 	).length
+			const analyzedCount = currentCase.evidence.filter(
+				(e) => e.analyzed
+			).length
+			const interviewedCount = currentCase.people.filter(
+				(p) => p.interviewed
+			).length
 
-	// 	const updatedNews = currentCase.breakingNews.map((news) => {
-	// 		if (news.revealed) return news
+			let isNewsRevealedStatusChanged = false
 
-	// 		if (news.triggerCondition.startsWith('evidence-analyzed-')) {
-	// 			const required = parseInt(news.triggerCondition.split('-')[2])
-	// 			if (analyzedCount >= required) {
-	// 				setIsNewsReaded(false)
-	// 				return { ...news, revealed: true }
-	// 			}
-	// 		}
+			const updatedNews = currentCase.breakingNews.map((news) => {
+				if (news.revealed) return news
 
-	// 		if (news.triggerCondition.startsWith('person-interviewed-')) {
-	// 			const required = parseInt(news.triggerCondition.split('-')[2])
-	// 			if (interviewedCount >= required) {
-	// 				setIsNewsReaded(false)
-	// 				return { ...news, revealed: true }
-	// 			}
-	// 		}
+				if (news.triggerCondition.startsWith('evidence-analyzed-')) {
+					const requiredCount = parseInt(news.triggerCondition.split('-')[2])
+					if (analyzedCount >= requiredCount && !news.revealed) {
+						setIsNewsReaded(false)
+						isNewsRevealedStatusChanged = true
+						return { ...news, revealed: true }
+					}
+				}
 
-	// 		return news
-	// 	})
+				if (news.triggerCondition.startsWith('person-interviewed-')) {
+					const requiredCount = parseInt(news.triggerCondition.split('-')[2])
+					if (interviewedCount >= requiredCount && !news.revealed) {
+						setIsNewsReaded(false)
+						isNewsRevealedStatusChanged = true
+						return { ...news, revealed: true }
+					}
+				}
 
-	// 	const updatedCase = { ...currentCase, breakingNews: updatedNews }
-	// 	setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
-	// }
+				return news
+			})
 
-	// useEffect(() => {
-	// 	const checkBreakingNews = () => {
-	// 		if (!currentCase || !currentCase.breakingNews) return
-
-	// 		const analyzedCount = currentCase.evidence.filter(
-	// 			(e) => e.analyzed
-	// 		).length
-	// 		const interviewedCount = currentCase.people.filter(
-	// 			(p) => p.interviewed
-	// 		).length
-
-	// 		const updatedNews = currentCase.breakingNews.map((news) => {
-	// 			if (news.revealed) return news
-
-	// 			if (news.triggerCondition.startsWith('evidence-analyzed-')) {
-	// 				const requiredCount = parseInt(news.triggerCondition.split('-')[2])
-	// 				if (analyzedCount >= requiredCount) {
-	// 					setIsNewsReaded(false)
-	// 					return { ...news, revealed: true }
-	// 				}
-	// 			}
-
-	// 			if (news.triggerCondition.startsWith('person-interviewed-')) {
-	// 				const requiredCount = parseInt(news.triggerCondition.split('-')[2])
-	// 				if (interviewedCount >= requiredCount) {
-	// 					setIsNewsReaded(false)
-	// 					return { ...news, revealed: true }
-	// 				}
-	// 			}
-
-	// 			return news
-	// 		})
-
-	// 		const updatedCase = { ...currentCase, breakingNews: updatedNews }
-	// 		setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
-	// 		setCurrentCase(updatedCase)
-	// 	}
-	// 	checkBreakingNews()
-	// }, [currentCase?.breakingNews, currentCase?.evidence])
+			if (isNewsRevealedStatusChanged) {
+				const updatedCase = { ...currentCase, breakingNews: updatedNews }
+				setCases(cases.map((c) => (c.id === currentCase.id ? updatedCase : c)))
+				setCurrentCase(updatedCase)
+				console.log('news', updatedCase.breakingNews)
+			}
+		}
+		checkBreakingNews()
+	}, [currentCase, cases])
 
 	useEffect(() => {
 		const getAvailablePeople = () => {
