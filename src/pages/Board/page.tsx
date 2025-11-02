@@ -52,7 +52,7 @@ const BoardPage = () => {
 							</h4>
 							<p className='text-3xl font-bold'>
 								{currentCase.people.filter((p) => p.interviewed).length}/
-								{availablePeople.length}
+								{availablePeople.filter((p) => p.dialogueTrees.length).length}
 							</p>
 						</div>
 					</div>

@@ -16,15 +16,11 @@ const InterrogationPage = () => {
 		if (!person || !person.available) return
 		setSelectedPerson(person)
 		setInterrogationMode(true)
-		// setContradictionMode(false)
-		// setSelectedResponses([])
 	}
 
 	const closeInterrogation = () => {
 		setInterrogationMode(false)
 		setSelectedPerson(null)
-		// setContradictionMode(false)
-		// setSelectedResponses([])
 	}
 
 	// const toggleContradictionMode = () => {

@@ -36,10 +36,7 @@ const InterrogatingRoom = ({
 		if (!currentCase || !selectedPerson || selectedResponses.length !== 2)
 			return
 
-		const person = currentCase.people.find((p) => p.id === selectedPerson.id)
-		if (!person) return
-
-		const contradiction = person.contradictions.find(
+		const contradiction = selectedPerson.contradictions.find(
 			(c) =>
 				(c.response1 === selectedResponses[0] &&
 					c.response2 === selectedResponses[1]) ||
