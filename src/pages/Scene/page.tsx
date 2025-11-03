@@ -3,6 +3,8 @@ import { useCaseStore } from '../../store/case'
 import { useEvidenceStore } from '../../store/evidence'
 import Header from '../../components/Header'
 import Navigation from '../../components/Navigation'
+import TextDecodingGame from '../../components/TextDecodingGame'
+import { toast } from 'react-toastify'
 
 const ScenePage = () => {
 	const { currentCase, setCases, cases, setCurrentCase } = useCaseStore(
@@ -48,6 +50,10 @@ const ScenePage = () => {
 			<Header />
 			<Navigation />
 			<div className='flex-1 w-full flex flex-col justify-start max-w-7xl mx-auto p-8'>
+				<TextDecodingGame
+					solution='Meet me in the garden'
+					onSolved={() => toast.success('You did it!')}
+				/>
 				<h2 className='text-2xl font-bold mb-6'>Crime Scene Locations</h2>
 				<div className='grid md:grid-cols-2 gap-6'>
 					{currentCase.scene.map((location) => (
