@@ -51,8 +51,10 @@ const ScenePage = () => {
 			<Navigation />
 			<div className='flex-1 w-full flex flex-col justify-start max-w-7xl mx-auto p-8'>
 				<TextDecodingGame
-					// solution='Meet me in the garden'
-					solution='Meet'
+					// solution='Meet garden'
+					// solution='eeMee'
+					solution='Meet me in the garden'
+					// solution='Meet'
 					onSolved={() => toast.success('You did it!')}
 				/>
 				<h2 className='text-2xl font-bold mb-6'>Crime Scene Locations</h2>

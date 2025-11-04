@@ -20,7 +20,7 @@ export default function TextDecodingGame({
 	solution,
 	onSolved,
 	shuffle = true,
-	maxHintsCount = 222222,
+	maxHintsCount = 2222,
 }: Props) {
 	const [hinted, setHinted] = useState<number[]>([])
 	const normalized = solution.toUpperCase()
@@ -69,7 +69,8 @@ export default function TextDecodingGame({
 	const basePool = useMemo(() => {
 		const pool: { char: string; id: number }[] = []
 		positions.forEach((c, idx) => {
-			if (c !== ' ' && !inputs[idx].revealed) pool.push({ char: c, id: idx })
+			if (c !== ' ' && !inputs[idx].revealed && !inputs[idx].locked)
+				pool.push({ char: c, id: idx })
 		})
 		return pool
 	}, [positions, inputs])
@@ -77,14 +78,15 @@ export default function TextDecodingGame({
 	const [letterPool, setLetterPool] = useState(
 		shuffle ? shuffleArray([...basePool]) : [...basePool]
 	)
-
+	console.log('app letterPool', letterPool)
 	const [usedPool, setUsedPool] = useState<boolean[]>(
 		Array(letterPool.length).fill(false)
 	)
+	console.log('app usedPool', usedPool)
 	const [inputToPoolIndex, setInputToPoolIndex] = useState<(number | null)[]>(
 		Array(inputs.length).fill(null)
 	)
-
+	console.log('app inputToPoolIndex', inputToPoolIndex)
 	const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
 	const solved = useMemo(() => {
@@ -107,7 +109,13 @@ export default function TextDecodingGame({
 	// ------------------ Helpers ------------------
 	const nextEditableIndexFrom = (start: number) => {
 		for (let i = start; i < inputs.length; i++) {
-			if (!inputs[i].locked && positions[i] !== ' ' && inputs[i].value === '')
+			// if (!inputs[i].locked && !inputs[i].revealed && positions[i] !== ' ' && inputs[i].value === '')
+			if (
+				!inputs[i].locked &&
+				!inputs[i].revealed &&
+				positions[i] !== ' ' &&
+				inputs[i].value === ''
+			)
 				return i
 		}
 		return -1
@@ -115,7 +123,12 @@ export default function TextDecodingGame({
 
 	const prevEditableIndexFrom = (start: number) => {
 		for (let i = start - 1; i >= 0; i--) {
-			if (!inputs[i].locked && positions[i] !== ' ' && inputs[i].value !== '')
+			if (
+				!inputs[i].locked &&
+				!inputs[i].revealed &&
+				positions[i] !== ' ' &&
+				inputs[i].value === ''
+			)
 				return i
 		}
 		return -1
@@ -220,117 +233,147 @@ export default function TextDecodingGame({
 	}
 
 	const onGetHint = () => {
-		const emptyIndexes = []
-		const filledWrongIndexes = []
+		const indexes = []
 		for (let i = 0; i < inputs.length; i++) {
-			if (!inputs[i].locked && positions[i] !== ' ' && !inputs[i].revealed) {
-				if (inputs[i].value === '') {
-					emptyIndexes.push(i)
-					//if filled with wrong char
-				} else if (inputs[i].value !== positions[i]) {
-					filledWrongIndexes.push(i)
-				}
+			if (positions[i] !== ' ' && !inputs[i].locked && !inputs[i].revealed) {
+				indexes.push(i)
 			}
 		}
-		if (!emptyIndexes.length && !filledWrongIndexes.length) return
-		//if possible fill empty first
-		if (emptyIndexes.length) {
-			const index =
-				emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)]
+		if (!indexes.length) return
 
-			console.log('emptyIndexes index', index)
-			console.log('positions[index]', positions[index])
-			console.log('inputs[index]', inputs[index])
-			console.log('emptyIndexes', emptyIndexes)
-			const rightChar = positions[index]
+		const index = indexes[Math.floor(Math.random() * indexes.length)]
+		// const index = indexes[Math.floor(Math.random() * (indexes.length - 1))]
+		const rightChar = positions[index]
 
-			// Find first unused pool index of this char
-			const poolIdx = letterPool.findIndex(
-				(p, idx) => p.char === rightChar && !usedPool[idx]
-			)
-			console.log('poolIdx', poolIdx, letterPool, usedPool)
-			// if (poolIdx === -1) return
-			if (poolIdx === -1) {
-				//need to set right char in this input and delete right char from wrong input
-				const wrongChar = inputs[index].value //''
-				const rightCharWrongInputIndex = inputs.findIndex(
-					(input) =>
-						input.value === rightChar && !input.locked && !input.revealed
-				)
-				//rip
-				if (rightCharWrongInputIndex === -1) return
+		console.log('index', index)
+		console.log('rightChar', rightChar)
+		console.log('curr', inputs[index].value || 'no value')
+		console.log('inputs', inputs)
+		// console.log('indexes', indexes)
+		console.log('inputs joined', inputs.map((i) => i.value || '_').join(''))
 
-				const newInputs = [...inputs]
-				newInputs[rightCharWrongInputIndex].value = ''
-				newInputs[index].value = rightChar
-				newInputs[index].revealed = true
-				newInputs[index].locked = true
+		// if right char
+		if (inputs[index].value === rightChar) {
+			console.log('rofl inputs[index].value === rightChar')
+			setHinted([...hinted, index])
+			const newInputs = [...inputs]
+			newInputs[index].revealed = true
+			newInputs[index].locked = true
+			setInputs(newInputs)
+			return
+		}
+		console.log('letterPool', letterPool)
+		console.log('usedPool', usedPool)
+		// Find first unused pool index of this char
+		const poolIdx = letterPool.findIndex(
+			(p, idx) => p.char === rightChar && !usedPool[idx]
+		)
+		// console.log('poolIdx', poolIdx, letterPool, usedPool)
 
-				const rightCharPoolIndex = letterPool.findIndex(
-					(p) => p.char === rightChar
-				)
-				// const rightCharWrongInputPoolIndex = letterPool.findIndex(
-				// 	(p) => p.char === wrongChar
-				// )
-				//another rip
-				// if (rightCharPoolIndex === -1 || rightCharWrongInputPoolIndex === -1)
-				if (rightCharPoolIndex === -1) return
-				const newMap = [...inputToPoolIndex]
-				newMap[index] = rightCharPoolIndex
-				newMap[rightCharWrongInputIndex] = null
-				setInputToPoolIndex(newMap)
-				const newUsed = [...usedPool]
-				newUsed[rightCharPoolIndex] = true
-				// newUsed[rightCharWrongInputPoolIndex] = false
-				setInputs(newInputs)
-				setUsedPool(newUsed)
-				setHinted([...hinted, index])
-
-				inputRefs.current[rightCharWrongInputIndex]?.focus()
-				return
-			}
-
+		//found in pool, also need to delete char if current input is filled
+		if (poolIdx !== -1) {
+			const currentValue = inputs[index].value
 			// Fill input and map pool index
 			const newInputs = [...inputs]
 			newInputs[index].value = rightChar
 			newInputs[index].revealed = true
 			newInputs[index].locked = true
-			setInputs(newInputs)
+			const prevValuePoolIndexes = [...letterPool]
+				.map((p, idx) =>
+					currentValue && p.char === currentValue && usedPool[idx] ? idx : null
+				)
+				.filter((p) => p !== null)
 
 			const newMap = [...inputToPoolIndex]
+			console.log('inputToPoolIndex if poolIdx !== -1', inputToPoolIndex)
 			newMap[index] = poolIdx
-			setInputToPoolIndex(newMap)
+			if (prevValuePoolIndexes.length) {
+				const prevValuePoolIndex =
+					prevValuePoolIndexes[prevValuePoolIndexes.length - 1]
+				console.log(
+					'newMap[prevValuePoolIndex] = null prevValuePoolIndexes, prevValuePoolIndex',
+					prevValuePoolIndexes,
+					prevValuePoolIndex
+				)
+				newMap[prevValuePoolIndex] = null
+			}
 
 			const newUsed = [...usedPool]
 			newUsed[poolIdx] = true
-			setUsedPool(newUsed)
+			if (prevValuePoolIndexes.length) {
+				const prevValuePoolIndex =
+					prevValuePoolIndexes[prevValuePoolIndexes.length - 1]
+				console.log(
+					'newUsed[prevValuePoolIndex] = false prevValuePoolIndexes, prevValuePoolIndex',
+					prevValuePoolIndexes,
+					prevValuePoolIndex
+				)
+				newUsed[prevValuePoolIndex] = false
+			}
 
 			// Move focus to next editable input
 			const next = nextEditableIndexFrom(index + 1)
 			if (next !== -1) inputRefs.current[next]?.focus()
 
+			console.log('poolIdx !== -1')
 			setHinted([...hinted, index])
+			setInputs(newInputs)
+			setInputToPoolIndex(newMap)
+			setUsedPool(newUsed)
+
 			return
 		}
-
-		const index =
-			filledWrongIndexes[Math.floor(Math.random() * filledWrongIndexes.length)]
-		const rightChar = positions[index]
-
-		console.log('filledWrongIndexes index', index)
-		console.log('positions[index]', positions[index])
-		console.log('inputs[index]', inputs[index])
-		console.log('filledWrongIndexes', filledWrongIndexes)
-
-		console.log('letterPool', letterPool)
-		console.log('usedPool', usedPool)
-		//need to delete wrong character from this index and replace with right and delete right char from wrong input
-		const wrongChar = inputs[index].value
+		//didnt find in pool, need to set right char in this input and (delete right char from wrong input or leave empty)
+		const currentChar = inputs[index].value
 		const rightCharWrongInputIndex = inputs.findIndex(
 			(input) => input.value === rightChar && !input.locked && !input.revealed
 		)
 		//rip
-		if (rightCharWrongInputIndex === -1) return
+		if (rightCharWrongInputIndex === -1) {
+			console.log('RIPRIPRIP didnt find in pool and in filled inputs')
+			return
+		}
+
+		// const rightCharPoolIndex = letterPool.findIndex((p) => p.char === rightChar)
+		const rightCharPoolIndex = letterPool.findIndex(
+			(p) =>
+				p.char === rightChar &&
+				inputs.find(
+					(input) =>
+						input.value === rightChar && !input.locked && !input.revealed
+				)
+		)
+		// const rightCharWrongInputPoolIndex = letterPool.findIndex(
+		// 	(p) => p.char === currentChar
+		// )
+		const rightCharWrongInputPoolIndex = letterPool.findIndex(
+			(p) =>
+				p.char === currentChar &&
+				inputs.find(
+					(input) =>
+						input.value === rightChar && !input.locked && !input.revealed
+				)
+		)
+		//another rip
+		if (
+			rightCharPoolIndex === -1 ||
+			(currentChar && rightCharWrongInputPoolIndex === -1)
+			// (!currentChar && rightCharWrongInputPoolIndex === -1)
+		)
+			return
+
+		const newMap = [...inputToPoolIndex]
+		newMap[index] = rightCharPoolIndex
+		if (currentChar && rightCharWrongInputPoolIndex !== -1) {
+			newMap[rightCharWrongInputIndex] = null
+		}
+		// newMap[rightCharWrongInputIndex] = null
+
+		const newUsed = [...usedPool]
+		newUsed[rightCharPoolIndex] = true
+		if (currentChar && rightCharWrongInputPoolIndex !== -1) {
+			newUsed[rightCharWrongInputPoolIndex] = false
+		}
 
 		const newInputs = [...inputs]
 		newInputs[rightCharWrongInputIndex].value = ''
@@ -338,46 +381,12 @@ export default function TextDecodingGame({
 		newInputs[index].revealed = true
 		newInputs[index].locked = true
 
-		const rightCharPoolIndex = letterPool.findIndex((p) => p.char === rightChar)
-		const rightCharWrongInputPoolIndex = letterPool.findIndex(
-			(p) => p.char === wrongChar
-		)
-		//another rip
-		if (rightCharPoolIndex === -1 || rightCharWrongInputPoolIndex === -1) return
-		const newMap = [...inputToPoolIndex]
-		newMap[index] = rightCharPoolIndex
-		newMap[rightCharWrongInputIndex] = null
-		setInputToPoolIndex(newMap)
-
-		const newUsed = [...usedPool]
-		newUsed[rightCharPoolIndex] = true
-		newUsed[rightCharWrongInputPoolIndex] = false
 		setInputs(newInputs)
+		setInputToPoolIndex(newMap)
 		setUsedPool(newUsed)
 		setHinted([...hinted, index])
-
+		console.log('poolIdx ====== -1')
 		inputRefs.current[rightCharWrongInputIndex]?.focus()
-		return
-
-		// Fill input and map pool index
-		// const newInputs = [...inputs]
-		// newInputs[index].value = rightChar
-		// newInputs[index].revealed = true
-		// newInputs[index].locked = true
-		// setInputs(newInputs)
-
-		// const newMap = [...inputToPoolIndex]
-		// newMap[index] = poolIdx
-		// setInputToPoolIndex(newMap)
-
-		// const newUsed = [...usedPool]
-		// newUsed[poolIdx] = true
-		// setUsedPool(newUsed)
-
-		// // Move focus to next editable input
-		// const next = nextEditableIndexFrom(index + 1)
-		// if (next !== -1) inputRefs.current[next]?.focus()
-		// setHinted([...hinted, index])
 	}
 
 	return (
