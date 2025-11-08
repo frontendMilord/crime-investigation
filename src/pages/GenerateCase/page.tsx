@@ -1,10 +1,6 @@
 import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
-import {
-	CASE_LANGUAGES,
-	CASE_TYPES,
-	DEFAULT_PROMT_FOR_AI_CASE_GENERATION,
-} from '../../consts/case'
+import { CASE_LANGUAGES, CASE_TYPES } from '../../consts/case'
 import UploadCase from '../../components/UploadCase'
 import type { ICase } from '../../types'
 import { useCaseStore } from '../../store/case'
@@ -35,8 +31,7 @@ const CASE_SIZES = [
 ]
 
 export default function GenerateCasePage() {
-	const [copiedDefault, setCopiedDefault] = useState(false)
-	const [copiedCustom, setCopiedCustom] = useState(false)
+	const [copied, setCopied] = useState(false)
 
 	const [caseType, setCaseType] = useState('Murder')
 	const [hasTimeLimit, setHasTimeLimit] = useState(true)
@@ -326,47 +321,12 @@ GENERAL TIPS:
 				<h1 className='text-3xl font-bold mb-8'>Crime Case Prompt Generator</h1>
 
 				<div className='bg-gray-800 rounded-lg p-6'>
-					Use default or custom prompt to generate case. Then paste it into the
-					text area below or upload a JSON file.
-				</div>
-
-				<div className='flex flex-col lg:flex-row gap-4'>
-					<PasteGeneratedCase
-						onSuccess={onFileUploadSuccess}
-						onError={onFileUploadError}
-					/>
-					<UploadCase
-						onSuccess={onFileUploadSuccess}
-						onError={onFileUploadError}
-					/>
+					Use prompt to generate case. Then paste generated case into the text
+					area below or upload a JSON file.
 				</div>
 
 				<div className='bg-gray-800 rounded-lg p-6'>
-					<div className='flex items-center justify-between mb-3'>
-						<h2 className='text-xl font-semibold'>Default Prompt</h2>
-						<button
-							onClick={() =>
-								copyToClipboard(
-									DEFAULT_PROMT_FOR_AI_CASE_GENERATION,
-									setCopiedDefault
-								)
-							}
-							className='flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors'
-						>
-							{copiedDefault ? <Check size={18} /> : <Copy size={18} />}
-							{copiedDefault ? 'Copied!' : 'Copy'}
-						</button>
-					</div>
-					<textarea
-						readOnly
-						value={DEFAULT_PROMT_FOR_AI_CASE_GENERATION}
-						className='w-full h-40 bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500'
-					/>
-				</div>
-
-				<div className='bg-gray-800 rounded-lg p-6'>
-					<h2 className='text-xl font-semibold mb-6'>Customize Prompt</h2>
-
+					<h2 className='text-xl font-semibold mb-6'>Customize case</h2>
 					<div className='space-y-6'>
 						<div>
 							<label className='block text-sm font-medium mb-2'>
@@ -486,11 +446,11 @@ GENERAL TIPS:
 							<div className='flex items-center justify-between mb-3'>
 								<h2 className='text-xl font-semibold'>Customized Prompt</h2>
 								<button
-									onClick={() => copyToClipboard(customPrompt, setCopiedCustom)}
+									onClick={() => copyToClipboard(customPrompt, setCopied)}
 									className='flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors'
 								>
-									{copiedCustom ? <Check size={18} /> : <Copy size={18} />}
-									{copiedCustom ? 'Copied!' : 'Copy'}
+									{copied ? <Check size={18} /> : <Copy size={18} />}
+									{copied ? 'Copied!' : 'Copy'}
 								</button>
 							</div>
 							<textarea
