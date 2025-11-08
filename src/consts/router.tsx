@@ -9,6 +9,7 @@ import PhonePage from '../pages/Phone/page'
 import NewsPage from '../pages/News/page'
 import BoardPage from '../pages/Board/page'
 import SolutionPage from '../pages/Solution/page'
+import GenerateCasePage from '../pages/GenerateCase/page'
 
 export const ROUTES: { path: string; element: ReactElement }[] = [
 	{ path: ROUTES_PATHS.BASE, element: <MenuPage /> },
@@ -20,6 +21,7 @@ export const ROUTES: { path: string; element: ReactElement }[] = [
 	{ path: ROUTES_PATHS.NEWS, element: <NewsPage /> },
 	{ path: ROUTES_PATHS.BOARD, element: <BoardPage /> },
 	{ path: ROUTES_PATHS.SOLUTION, element: <SolutionPage /> },
+	{ path: ROUTES_PATHS.GENERATE_CASE, element: <GenerateCasePage /> },
 ]
 
 export const CASE_PAGES = [

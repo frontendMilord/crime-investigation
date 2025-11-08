@@ -2,11 +2,31 @@ import type { ICase } from '../types'
 
 // export const defaultCases: ICase[] = []
 
-export const PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Follow the structure, optional fields marked with "?". Create an engaging mystery with realistic clues and strategic interrogation paths.
+export const CASE_TYPES = [
+	{ value: 'random', label: 'Random' },
+	{ value: 'Murder', label: 'Murder' },
+	{ value: 'Theft', label: 'Theft' },
+	{ value: 'Kidnapping', label: 'Kidnapping' },
+	{ value: 'Fraud', label: 'Fraud' },
+	{ value: 'Assault', label: 'Assault' },
+]
+
+export const CASE_LANGUAGES = [
+	{ value: 'english', label: 'English' },
+	{ value: 'spanish', label: 'Spanish' },
+	{ value: 'french', label: 'French' },
+	{ value: 'german', label: 'German' },
+	{ value: 'ukrainian', label: 'Ukrainian' },
+	{ value: 'russian', label: 'Russian' },
+]
+
+export const DEFAULT_PROMT_FOR_AI_CASE_GENERATION = `Generate a detailed crime investigation case in JSON format with interactive dialogue trees and contradictions. Follow the structure, optional fields marked with "?". Create an engaging mystery with realistic clues and strategic interrogation paths.
 
 STRUCTURE:
 {
-  "title": "Case Name",
+  "title": "${CASE_TYPES.slice(1)
+		.map((t) => t.label)
+		.join('/')}",
   "type": "Murder/Theft/Kidnapping/etc",
   "victim": "Victim Name",
   "timeLimit?": 1500,
@@ -90,6 +110,11 @@ STRUCTURE:
 			"dialogueTrees": []
     }
   ],
+  "solution": {
+    "culprit": "person1",
+    "motive": "Detailed explanation of why they did it",
+    "method": "Detailed explanation of how they committed the crime"
+  }
   "phoneRecords": {
     "unlockedBy": "phone-evidence-id",
     "calls": [
@@ -118,12 +143,7 @@ STRUCTURE:
       "content": "Full news article revealing new information",
       "revealed": false
     }
-  ],
-  "solution": {
-    "culprit": "person1",
-    "motive": "Detailed explanation of why they did it",
-    "method": "Detailed explanation of how they committed the crime"
-  }
+  ]
 }
 
 CRITICAL REQUIREMENTS:

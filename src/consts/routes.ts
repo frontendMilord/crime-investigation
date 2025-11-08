@@ -9,4 +9,5 @@ export const ROUTES_PATHS = {
 	NEWS: '/news',
 	BOARD: '/board',
 	SOLUTION: '/solution',
+	GENERATE_CASE: '/generate-case',
 }
