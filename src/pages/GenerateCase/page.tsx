@@ -14,6 +14,7 @@ import { GenerateCaseSchema } from '@/schemas/generateCase'
 import z from 'zod'
 import {
 	Field,
+	FieldContent,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
@@ -25,6 +26,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 
 const CASE_SIZES = [
@@ -50,28 +54,25 @@ const CASE_SIZES = [
 
 export default function GenerateCasePage() {
 	const [copied, setCopied] = useState(false)
-
-	const [caseType, setCaseType] = useState('Murder')
-	const [hasTimeLimit, setHasTimeLimit] = useState(true)
-	const [useDefaultTimeLimit, setUseDefaultTimeLimit] = useState(true)
-	const [customTimeLimit, setCustomTimeLimit] = useState('1500')
-	const [language, setLanguage] = useState('english')
-	const [caseSize, setCaseSize] = useState('medium')
-
 	const [customPrompt, setCustomPrompt] = useState('')
 
 	const { cases, setCases } = useCaseStore()
 	const navigate = useNavigate()
-	const { control, formState, handleSubmit } = useForm<
+	const { control, formState, handleSubmit, watch } = useForm<
 		z.infer<typeof GenerateCaseSchema>
 	>({
 		defaultValues: {
 			caseType: 'Murder',
-			language: 'english',
+			caseLanguage: 'english',
 			caseSize: 'medium',
+			hasTimeLimit: true,
+			defaultTimeLimit: true,
+			customTimeLimit: '',
 		},
 		resolver: zodResolver(GenerateCaseSchema),
 	})
+
+	const { hasTimeLimit, defaultTimeLimit } = watch()
 
 	const copyToClipboard = async (
 		text: string,
@@ -97,7 +98,14 @@ export default function GenerateCasePage() {
 		console.error('error uploading case file', error)
 	}
 
-	const generateCustomPrompt = () => {
+	const generateCustomPrompt = ({
+		caseType,
+		caseLanguage,
+		caseSize,
+		hasTimeLimit,
+		defaultTimeLimit,
+		customTimeLimit,
+	}: z.infer<typeof GenerateCaseSchema>) => {
 		let prompt = ''
 
 		// Opening sentence
@@ -108,8 +116,10 @@ export default function GenerateCasePage() {
 		}
 
 		// Language instruction
-		if (language !== 'english') {
-			const langName = CASE_LANGUAGES.find((l) => l.value === language)?.label
+		if (caseLanguage !== 'english') {
+			const langName = CASE_LANGUAGES.find(
+				(l) => l.value === caseLanguage
+			)?.label
 			prompt += `IMPORTANT: Generate all content (title, briefing, descriptions, dialogue, evidence names, etc.) in ${langName}.\n\n`
 		}
 
@@ -288,7 +298,7 @@ EVIDENCE:
 		// timeToProcess instruction
 		if (!hasTimeLimit) {
 			prompt += `- timeToProcess for evidence can be set to reasonable values (5-300 seconds), but timeLimit should be OMITTED from the JSON structure\n`
-		} else if (useDefaultTimeLimit) {
+		} else if (defaultTimeLimit) {
 			prompt += `- Set timeToProcess for each piece of evidence in seconds based on how long it takes to process (from 5 to 300, total time to process all evidence should be less than half of timeLimit)\n- Generate a fair timeLimit value between 900-3600 seconds based on the case complexity\n`
 		} else {
 			prompt += `- Set timeToProcess for each piece of evidence in seconds based on how long it takes to process (from 5 to 300, total time to process all evidence should be less than half of timeLimit)\n- Set timeLimit to exactly ${customTimeLimit} seconds\n`
@@ -322,7 +332,7 @@ GENERAL TIPS:
 		// time limit instruction
 		if (!hasTimeLimit) {
 			prompt += `- Do NOT include timeLimit field in the JSON output`
-		} else if (useDefaultTimeLimit) {
+		} else if (defaultTimeLimit) {
 			prompt += `- Generate a fair timeLimit value between 900-3600 seconds based on the case complexity`
 		} else {
 			prompt += `- Set timeLimit to exactly ${customTimeLimit} seconds`
@@ -338,14 +348,8 @@ GENERAL TIPS:
 
 	const onSubmit = (data: z.infer<typeof GenerateCaseSchema>) => {
 		console.log(data)
+		generateCustomPrompt(data)
 	}
-
-	const isFormValid =
-		!hasTimeLimit ||
-		useDefaultTimeLimit ||
-		(customTimeLimit &&
-			!isNaN(Number(customTimeLimit)) &&
-			Number(customTimeLimit) > 0)
 
 	return (
 		<div className='min-h-screen bg-gray-900 text-gray-100 p-6'>
@@ -358,15 +362,28 @@ GENERAL TIPS:
 				</div>
 
 				<div className='bg-gray-800 rounded-lg p-6'>
-					<form onSubmit={handleSubmit(onSubmit)}>
-						<FieldGroup>
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						id='generateCaseForm'
+						className='mb-6'
+					>
+						<Label
+							htmlFor='generateCaseForm'
+							className='text-xl font-semibold mb-6'
+						>
+							Customize case
+						</Label>
+						<FieldGroup className='gap-6'>
 							<Controller
 								name='caseType'
 								control={control}
 								render={({ field, fieldState }) => (
 									<Field data-invalid={fieldState.invalid}>
-										<FieldLabel htmlFor={field.name}>Case Type</FieldLabel>
-										<Select {...field}>
+										<FieldLabel htmlFor={field.name}>Case type</FieldLabel>
+										<Select
+											{...field}
+											onValueChange={field.onChange}
+										>
 											<SelectTrigger onBlur={field.onBlur}>
 												<SelectValue placeholder='Case Type' />
 											</SelectTrigger>
@@ -381,156 +398,179 @@ GENERAL TIPS:
 												))}
 											</SelectContent>
 										</Select>
-										{formState.errors.caseType?.message && (
+										{formState.errors[field.name]?.message && (
 											<FieldError
 												errors={[
-													{ message: formState.errors.caseType?.message },
+													{ message: formState.errors[field.name]?.message },
 												]}
-											>
-												{formState.errors.caseType?.message}
-											</FieldError>
+											/>
 										)}
 									</Field>
 								)}
 							/>
 							<Controller
-								name='testText'
+								name='caseLanguage'
 								control={control}
 								render={({ field, fieldState }) => (
 									<Field data-invalid={fieldState.invalid}>
-										<FieldLabel htmlFor={field.name}>Text</FieldLabel>
-										<Input
-											placeholder='Enter text'
-											id={field.name}
-										/>
-										{formState.errors.testText?.message && (
+										<FieldLabel htmlFor={field.name}>Case language</FieldLabel>
+										<Select
+											{...field}
+											onValueChange={field.onChange}
+										>
+											<SelectTrigger onBlur={field.onBlur}>
+												<SelectValue placeholder='Select case language' />
+											</SelectTrigger>
+											<SelectContent>
+												{CASE_LANGUAGES.map((lang) => (
+													<SelectItem
+														value={lang.value}
+														key={lang.value}
+													>
+														{lang.label}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{formState.errors[field.name]?.message && (
 											<FieldError
 												errors={[
-													{ message: formState.errors.testText?.message },
+													{ message: formState.errors[field.name]?.message },
 												]}
-											>
-												{formState.errors.testText?.message}
-											</FieldError>
+											/>
 										)}
 									</Field>
 								)}
 							/>
+							<Controller
+								name='caseSize'
+								control={control}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor={field.name}>Case size</FieldLabel>
+										<Select
+											{...field}
+											onValueChange={field.onChange}
+										>
+											<SelectTrigger onBlur={field.onBlur}>
+												<SelectValue placeholder='Select case size' />
+											</SelectTrigger>
+											<SelectContent>
+												{CASE_SIZES.map((size) => (
+													<SelectItem
+														value={size.value}
+														key={size.value}
+													>
+														{size.label} - {size.description}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{formState.errors[field.name]?.message && (
+											<FieldError
+												errors={[
+													{ message: formState.errors[field.name]?.message },
+												]}
+											/>
+										)}
+									</Field>
+								)}
+							/>
+							<Controller
+								name='hasTimeLimit'
+								control={control}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldContent className='flex flex-row items-center cursor-pointer'>
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+												id={field.name}
+												className='cursor-pointer'
+											/>
+											<FieldLabel
+												htmlFor={field.name}
+												className='text-sm cursor-pointer'
+											>
+												Include time limit?
+											</FieldLabel>
+										</FieldContent>
+										{formState.errors[field.name]?.message && (
+											<FieldError
+												errors={[
+													{ message: formState.errors[field.name]?.message },
+												]}
+											/>
+										)}
+									</Field>
+								)}
+							/>
+							{hasTimeLimit && (
+								<Controller
+									name='defaultTimeLimit'
+									control={control}
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldContent className='flex flex-row items-center cursor-pointer'>
+												<Checkbox
+													// {...field}
+													checked={field.value}
+													onCheckedChange={field.onChange}
+													id={field.name}
+													className='cursor-pointer'
+												/>
+												<FieldLabel
+													htmlFor={field.name}
+													className='text-sm cursor-pointer'
+												>
+													Default time limit (900-3600s)
+												</FieldLabel>
+											</FieldContent>
+											{formState.errors[field.name]?.message && (
+												<FieldError
+													errors={[
+														{ message: formState.errors[field.name]?.message },
+													]}
+												/>
+											)}
+										</Field>
+									)}
+								/>
+							)}
+							{hasTimeLimit && !defaultTimeLimit && (
+								<Controller
+									name='customTimeLimit'
+									control={control}
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldLabel
+												htmlFor={field.name}
+												className='text-sm'
+											>
+												Custom time limit
+											</FieldLabel>
+											<Input
+												{...field}
+												id={field.name}
+												placeholder='1500'
+											/>
+											{formState.errors[field.name]?.message && (
+												<FieldError
+													errors={[
+														{ message: formState.errors[field.name]?.message },
+													]}
+												/>
+											)}
+										</Field>
+									)}
+								/>
+							)}
+							<Button className='w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors cursor-pointer'>
+								Customize Prompt
+							</Button>
 						</FieldGroup>
 					</form>
-					<h2 className='text-xl font-semibold mb-6'>Customize case</h2>
-					<div className='space-y-6'>
-						<div>
-							<label className='block text-sm font-medium mb-2'>
-								Case Type
-							</label>
-							<select
-								value={caseType}
-								onChange={(e) => setCaseType(e.target.value)}
-								className='w-full bg-gray-900 text-gray-100 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-							>
-								{CASE_TYPES.map((type) => (
-									<option
-										key={type.value}
-										value={type.value}
-									>
-										{type.label}
-									</option>
-								))}
-							</select>
-						</div>
-
-						<div>
-							<label className='flex items-center gap-2 mb-3'>
-								<input
-									type='checkbox'
-									checked={hasTimeLimit}
-									onChange={(e) => setHasTimeLimit(e.target.checked)}
-									className='w-5 h-5 bg-gray-900 rounded border-gray-600 focus:ring-2 focus:ring-blue-500'
-								/>
-								<span className='text-sm font-medium'>Include Time Limit</span>
-							</label>
-
-							{hasTimeLimit && (
-								<div className='ml-7 space-y-3'>
-									<label className='flex items-center gap-2'>
-										<input
-											type='checkbox'
-											checked={useDefaultTimeLimit}
-											onChange={(e) => setUseDefaultTimeLimit(e.target.checked)}
-											className='w-5 h-5 bg-gray-900 rounded border-gray-600 focus:ring-2 focus:ring-blue-500'
-										/>
-										<span className='text-sm font-medium'>
-											Default Time Limit (900-3600s)
-										</span>
-									</label>
-
-									{!useDefaultTimeLimit && (
-										<div>
-											<label className='block text-sm font-medium mb-2'>
-												Custom Time Limit (seconds)
-											</label>
-											<input
-												type='number'
-												value={customTimeLimit}
-												onChange={(e) => setCustomTimeLimit(e.target.value)}
-												min='1'
-												className='w-full bg-gray-900 text-gray-100 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-												placeholder='Enter time limit in seconds'
-											/>
-										</div>
-									)}
-								</div>
-							)}
-						</div>
-
-						<div>
-							<label className='block text-sm font-medium mb-2'>Language</label>
-							<select
-								value={language}
-								onChange={(e) => setLanguage(e.target.value)}
-								className='w-full bg-gray-900 text-gray-100 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-							>
-								{CASE_LANGUAGES.map((lang) => (
-									<option
-										key={lang.value}
-										value={lang.value}
-									>
-										{lang.label}
-									</option>
-								))}
-							</select>
-						</div>
-
-						<div>
-							<label className='block text-sm font-medium mb-2'>
-								Case Size
-							</label>
-							<select
-								value={caseSize}
-								onChange={(e) => setCaseSize(e.target.value)}
-								className='w-full bg-gray-900 text-gray-100 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-							>
-								{CASE_SIZES.map((size) => (
-									<option
-										key={size.value}
-										value={size.value}
-									>
-										{size.label} - {size.description}
-									</option>
-								))}
-							</select>
-						</div>
-
-						<button
-							onClick={generateCustomPrompt}
-							disabled={!isFormValid}
-							className='w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors'
-						>
-							Customize Prompt
-						</button>
-					</div>
 				</div>
-
 				{customPrompt && (
 					<>
 						<div className='bg-gray-800 rounded-lg p-6'>
