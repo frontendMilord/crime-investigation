@@ -8,6 +8,24 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '../../consts/routes'
 import PasteGeneratedCase from '../../components/PasteGeneratedCase'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { GenerateCaseSchema } from '@/schemas/generateCase'
+import z from 'zod'
+import {
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from '@/components/ui/field'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 
 const CASE_SIZES = [
 	{
@@ -44,6 +62,16 @@ export default function GenerateCasePage() {
 
 	const { cases, setCases } = useCaseStore()
 	const navigate = useNavigate()
+	const { control, formState, handleSubmit } = useForm<
+		z.infer<typeof GenerateCaseSchema>
+	>({
+		defaultValues: {
+			caseType: 'Murder',
+			language: 'english',
+			caseSize: 'medium',
+		},
+		resolver: zodResolver(GenerateCaseSchema),
+	})
 
 	const copyToClipboard = async (
 		text: string,
@@ -308,6 +336,10 @@ GENERAL TIPS:
 		setTimeout(() => window.scrollTo({ top: 99999, behavior: 'smooth' }), 0)
 	}
 
+	const onSubmit = (data: z.infer<typeof GenerateCaseSchema>) => {
+		console.log(data)
+	}
+
 	const isFormValid =
 		!hasTimeLimit ||
 		useDefaultTimeLimit ||
@@ -326,6 +358,65 @@ GENERAL TIPS:
 				</div>
 
 				<div className='bg-gray-800 rounded-lg p-6'>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<FieldGroup>
+							<Controller
+								name='caseType'
+								control={control}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor={field.name}>Case Type</FieldLabel>
+										<Select {...field}>
+											<SelectTrigger onBlur={field.onBlur}>
+												<SelectValue placeholder='Case Type' />
+											</SelectTrigger>
+											<SelectContent>
+												{CASE_TYPES.map((type) => (
+													<SelectItem
+														value={type.value}
+														key={type.value}
+													>
+														{type.label}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{formState.errors.caseType?.message && (
+											<FieldError
+												errors={[
+													{ message: formState.errors.caseType?.message },
+												]}
+											>
+												{formState.errors.caseType?.message}
+											</FieldError>
+										)}
+									</Field>
+								)}
+							/>
+							<Controller
+								name='testText'
+								control={control}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor={field.name}>Text</FieldLabel>
+										<Input
+											placeholder='Enter text'
+											id={field.name}
+										/>
+										{formState.errors.testText?.message && (
+											<FieldError
+												errors={[
+													{ message: formState.errors.testText?.message },
+												]}
+											>
+												{formState.errors.testText?.message}
+											</FieldError>
+										)}
+									</Field>
+								)}
+							/>
+						</FieldGroup>
+					</form>
 					<h2 className='text-xl font-semibold mb-6'>Customize case</h2>
 					<div className='space-y-6'>
 						<div>
